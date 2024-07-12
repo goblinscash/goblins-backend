@@ -1,0 +1,37 @@
+{
+    "contract": {
+        "10000": {
+            "v3StakingContractAddress": "0x264136e16848008A689FAC1c121631ff6D44376E",
+            "nftManagerContractAddress": "0x6Cf824f9556cEdE40710AD25BC26fd47f7063944",
+            "stakeContractAddress": "0xfA3D02c971F6D97076b8405500c2210476C6A5E8"
+        },
+        "97": {
+            "v3StakingContractAddress": "0x3b34a1c3ad4a9a89831828d765abdc5cdc125de8",
+            "nftManagerContractAddress": "0x427bF5b37357632377eCbEC9de3626C71A5396c1",
+            "stakeContractAddress": "0x6abfa0F99e42159Dee2Deff686e331Fc5600029c"
+        }
+    },
+    "graphQLUrl": {
+        "10000": "https://graph.dfd.cash/subgraphs/name/v3stakerminwidths",
+        "56": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5",
+        "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5"
+
+    },
+    "rpcUrls": {
+        "10000": [
+            "https://smartbch.greyh.at",
+            "https://smartbch.fountainhead.cash/mainnet",
+            "https://global.uat.cash",
+            "https://rpc.uatvo.com",
+            "https://api.tatum.io/v3/blockchain/node/bch-mainnet ",
+            "https://rpc-mainnet.smartbch.org",
+            "https://smartbch.devops.cash/mainnet"
+        ],
+        "97": [
+            
+            "https://bsc-testnet-rpc.publicnode.com",
+            "https://endpoints.omniatech.io/v1/bsc/testnet/public"
+        ]
+    },
+    "poolDetailGraphQL": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3"
+}
