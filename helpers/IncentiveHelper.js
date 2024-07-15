@@ -27,9 +27,106 @@ const calculateAPR = (poolData) => {
 
 ///get single incentiveData from contract
 
-const getSingleIncentiveData = async (chainId, incentiveData) => {
+const createSingleIncentiveData = async (chainId, incentiveData) => {
   try {
-  } catch (error) {}
+    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
+    const web3 = new Web3Intraction(chainId);
+    let nftCount = 0;
+    let tokenData = await web3.getTokenDecimal(incentiveData.rewardToken);
+    let makeIncentiveId = await makeComputeData([
+      incentiveData.rewardToken,
+      incentiveData.pool,
+      incentiveData.startTime,
+      incentiveData.endTime,
+      incentiveData.refundee,
+    ]);
+    let pool = null;
+    if (chainId == 10000) {
+      let poolData = await getPool(incentiveData.pool);
+      pool = poolData.pool;
+    }
+    let aprData = pool ? calculateAPR(pool, incentiveData) : null;
+    // console.log(aprData, "<===aprdata");
+    if (Number(incentiveData.endTime) > moment().unix()) {
+      nftCount = await web3.nftCount(makeIncentiveId);
+    }
+
+    let data = {
+      apr: aprData?.apr || 0,
+      tvl: aprData?.tvl || 0,
+      incentiveId: makeIncentiveId,
+      feeTier: Number(pool?.feeTier || 0) / 10000,
+      getPoolDetail: {
+        token0Symbol: pool?.token0?.symbol,
+        token0Address: pool?.token0?.id,
+        token1Symbol: pool?.token1?.symbol,
+        token1Address: pool?.token1?.id,
+      },
+      minWidth: incentiveData.minWidth,
+      nftCount: nftCount.numberOfStakes?.toString(),
+
+      reward: incentiveData.reward,
+      rewardSymbol: tokenData.symbol,
+      isEnded: Number(incentiveData.endTime) > moment().unix() ? false : true,
+      key: {
+        rewardToken: incentiveData.rewardToken,
+        pool: incentiveData.pool,
+        startTime: incentiveData.startTime,
+        endTime: incentiveData.endTime,
+        refundee: incentiveData.refundee,
+      },
+    };
+    return data;
+  } catch (error) {
+    console.log(error, "<====error");
+    return null;
+  }
+};
+
+const getDepositIncentiveData = async (
+  chainId,
+  incentiveData,
+  tokenId,
+  walletAddress
+) => {
+  try {
+    const web3 = new Web3Intraction(chainId);
+    let desposit = await web3.getDeposit(tokenId);
+    let data = null;
+    if (desposit.owner === walletAddress) {
+      try {
+        let keyData = [
+          incentiveData.key.rewardToken,
+          incentiveData.key.pool,
+          incentiveData.key.startTime,
+          incentiveData.key.endTime,
+          incentiveData.key.refundee,
+        ];
+        let getRewards = await web3.getRewardInfo(keyData, tokenId);
+
+        if (getRewards) {
+          let tokenData = await web3.getTokenDecimal(
+            incentiveData.key.rewardToken
+          );
+
+          data = {
+            rewardInfo: {
+              reward: getRewards.reward.toString() / 10 ** tokenData.decimal,
+            },
+
+            ...incentiveData,
+          };
+        }
+        return data;
+      } catch (error) {
+        console.log(error, "<====err in getMyFarmData");
+      }
+    }
+    return data;
+  } catch (error) {
+    console.log(error, "<====error");
+    return null;
+  }
 };
 
 const getIncentiveDetail = async (chainId) => {
@@ -80,7 +177,6 @@ const getIncentiveDetail = async (chainId) => {
           token1Address: pool?.token1?.id,
         },
         minWidth: incentiveCreateds[i].minWidth,
-        transactionHash: incentiveCreateds[i].transactionHash,
         nftCount: nftCount.numberOfStakes?.toString(),
         id: incentiveCreateds[i].id,
         reward:
@@ -124,21 +220,16 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
   try {
     let { incentiveCreateds, tokenStakeds } = await getMyFarmData(chainId);
 
-
-
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
     const web3 = new Web3Intraction(chainId);
 
     const getUniqueTokenId = getUniqueToken(tokenStakeds);
 
-
     let myFarm = [];
     for (let d = 0; d < getUniqueTokenId.length; d++) {
       let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
- 
 
       if (desposit.owner === walletAddress) {
-  
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
             let keyData = [
@@ -160,13 +251,22 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
                 let poolData = await getPool(incentiveCreateds[i].pool);
                 pool = poolData.pool;
               }
+
+              let makeIncentiveId = await makeComputeData([
+                incentiveCreateds[i].rewardToken,
+                incentiveCreateds[i].pool,
+                incentiveCreateds[i].startTime,
+                incentiveCreateds[i].endTime,
+                incentiveCreateds[i].refundee,
+              ]);
+
               let tokenData = await web3.getTokenDecimal(
                 incentiveCreateds[i].rewardToken
               );
               myFarm.push({
                 id: incentiveCreateds[i].id,
                 feeTier: Number(pool?.feeTier || 0) / 10000,
-
+                incentiveId: makeIncentiveId,
                 getPoolDetail: {
                   token0Symbol: pool?.token0?.symbol,
                   token0Address: pool?.token0?.id,
@@ -183,10 +283,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
                   reward:
                     getRewards.reward.toString() / 10 ** tokenData.decimal,
                 },
-                isEnded:
-                  Number(incentiveCreateds[i].endTime) > moment().unix()
-                    ? false
-                    : true,
+
                 key: {
                   rewardToken: incentiveCreateds[i].rewardToken,
                   pool: incentiveCreateds[i].pool,
@@ -259,4 +356,6 @@ module.exports = {
   getIncentiveDetail,
   getMyFarmDetail,
   getDeletedDataForClaim,
+  createSingleIncentiveData,
+  getDepositIncentiveData,
 };
