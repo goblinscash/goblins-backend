@@ -1,6 +1,8 @@
 //response function
 const response = require("../../../utility/response");
 const redisFunc = require("../../../utility/redis");
+
+const moment = require("moment");
 const {
   getIncentiveDetail,
   getMyFarmDetail,
@@ -228,7 +230,9 @@ module.exports = {
 
         case "Unstake":
           if (farmData) {
-            let newData = farmData.filter((data) => data.incentiveId !== payload.incentiveId);
+            let newData = farmData.filter(
+              (data) => data.incentiveId !== payload.incentiveId
+            );
             await redisFunc.setString(
               payload.walletAddress.toLowerCase() +
                 "_" +

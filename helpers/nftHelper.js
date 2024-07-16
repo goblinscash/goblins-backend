@@ -1,7 +1,5 @@
 const Web3Intraction = require("../utility/web3Intraction");
 
-
-
 const loadWalletTokenIds = async (chainId, walletAddress) => {
   let tokens = [];
   const web3 = new Web3Intraction(chainId);
@@ -39,9 +37,6 @@ const loadWalletTokenIds = async (chainId, walletAddress) => {
 
   return tokens;
 };
-
-
-
 
 const loadContractTokenIds = async (chainId, walletAddress) => {
   let tokens = [];
