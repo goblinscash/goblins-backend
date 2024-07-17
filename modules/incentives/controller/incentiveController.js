@@ -201,6 +201,7 @@ module.exports = {
 
         case "Deposit":
           if (payload.isMutliStake) {
+            let depositMultiData = [];
             for (let i = 0; i < payload.incentiveId.length; i++) {
               let getIncentiveData = incentiveData.availableFarm.find(
                 (data) => data.incentiveId == payload.incentiveId[i]
@@ -214,16 +215,17 @@ module.exports = {
               );
 
               if (depositData) {
-                let newData = [depositData, ...farmData];
-
-                await redisFunc.setString(
-                  payload.walletAddress.toLowerCase() +
-                    "_" +
-                    payload.chainId.toString(),
-                  JSON.stringify(newData)
-                );
+                depositMultiData.push(depositData);
               }
             }
+            let newData = [...depositMultiData, ...farmData];
+
+            await redisFunc.setString(
+              payload.walletAddress.toLowerCase() +
+                "_" +
+                payload.chainId.toString(),
+              JSON.stringify(newData)
+            );
           } else {
             let getIncentiveData = incentiveData.availableFarm.find(
               (data) => data.incentiveId == payload.incentiveId
@@ -273,10 +275,10 @@ module.exports = {
               (data) => data.incentiveId !== payload.incentiveId
             );
 
-            incentiveData={
+            incentiveData = {
               availableFarm: newData,
               ...incentiveData,
-            }
+            };
             await redisFunc.setString(
               payload.chainId.toString(),
               JSON.stringify(incentiveData)
