@@ -110,6 +110,7 @@ const getDepositIncentiveData = async (
           );
 
           data = {
+            tokenId: tokenId,
             rewardInfo: {
               reward: getRewards.reward.toString() / 10 ** tokenData.decimal,
             },
@@ -331,6 +332,10 @@ const getDeletedDataForClaim = async (
           let rewards = await web3.getRewards(
             deletedIncentive[i].key.rewardToken,
             walletAddress
+          );
+
+          let tokenData = await web3.getTokenDecimal(
+            deletedIncentive[i].key.rewardToken
           );
 
           if (Number(rewards.toString()) > 0) {

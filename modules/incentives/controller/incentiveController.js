@@ -34,21 +34,18 @@ module.exports = {
       } else {
         data = JSON.parse(farmData);
       }
-      let resData = [];
-      if (!payload.isEnded) {
-        resData = data.availableFarm.filter(
-          (item) => Number(item.endTime) > currentTime
-        );
-      } else {
-        resData = data.availableFarm.filter(
-          (item) => Number(item.endTime) < currentTime
-        );
-      }
 
-      resData = data.availableFarm.filter(
-        (data) => data.isEnded == payload.isEnded
-      );
-      return response.sendSuccessResponse({ data: resData }, res);
+      if (!payload.isEnded) {
+        let resData = data.availableFarm.filter(
+          (item) => Number(item.key.endTime) > currentTime
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      } else {
+        let resData = data.availableFarm.filter(
+          (item) => Number(item.key.endTime) < currentTime
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      }
     } catch (error) {
       console.log(error, "<====error");
       return response.sendErrorResponse(error, res);
@@ -177,7 +174,7 @@ module.exports = {
           payload.walletAddress.toLowerCase() + "_" + payload.chainId.toString()
         );
 
-        farmData = JSON.parse(farmData);
+        farmData = farmData ? JSON.parse(farmData) : [];
       }
 
       switch (payload.type) {
@@ -187,7 +184,7 @@ module.exports = {
             payload.createdData
           );
 
-          if (data) {
+          if (newCreate) {
             incentiveData = {
               availableFarm: incentiveData.availableFarm.unshift(newCreate),
               ...incentiveData,
@@ -199,30 +196,56 @@ module.exports = {
             );
           }
 
-          return response.sendSuccessResponse({ data: data }, res);
+          return response.sendSuccessResponse({ data: incentiveData }, res);
           break;
 
         case "Deposit":
-          let getIncentiveData = incentiveData.availableFarm.find(
-            (data) => data.incentiveId == payload.incentiveId
-          );
+          if (payload.isMutliStake) {
+            for (let i = 0; i < payload.incentiveId.length; i++) {
+              let getIncentiveData = incentiveData.availableFarm.find(
+                (data) => data.incentiveId == payload.incentiveId[i]
+              );
 
-          let depositData = await getDepositIncentiveData(
-            payload.chainId,
-            getIncentiveData,
-            payload.tokenId,
-            payload.walletAddress
-          );
+              let depositData = await getDepositIncentiveData(
+                payload.chainId,
+                getIncentiveData,
+                payload.tokenId,
+                payload.walletAddress
+              );
 
-          if (depositData && farmData) {
-            let newData = [depositData, ...farmData];
+              if (depositData) {
+                let newData = [depositData, ...farmData];
 
-            await redisFunc.setString(
-              payload.walletAddress.toLowerCase() +
-                "_" +
-                payload.chainId.toString(),
-              JSON.stringify(newData)
+                await redisFunc.setString(
+                  payload.walletAddress.toLowerCase() +
+                    "_" +
+                    payload.chainId.toString(),
+                  JSON.stringify(newData)
+                );
+              }
+            }
+          } else {
+            let getIncentiveData = incentiveData.availableFarm.find(
+              (data) => data.incentiveId == payload.incentiveId
             );
+
+            let depositData = await getDepositIncentiveData(
+              payload.chainId,
+              getIncentiveData,
+              payload.tokenId,
+              payload.walletAddress
+            );
+
+            if (depositData) {
+              let newData = [depositData, ...farmData];
+
+              await redisFunc.setString(
+                payload.walletAddress.toLowerCase() +
+                  "_" +
+                  payload.chainId.toString(),
+                JSON.stringify(newData)
+              );
+            }
           }
 
           return response.sendSuccessResponse({ data: farmData }, res);
@@ -249,9 +272,14 @@ module.exports = {
             let newData = incentiveData.availableFarm.filter(
               (data) => data.incentiveId !== payload.incentiveId
             );
+
+            incentiveData={
+              availableFarm: newData,
+              ...incentiveData,
+            }
             await redisFunc.setString(
               payload.chainId.toString(),
-              JSON.stringify(newData)
+              JSON.stringify(incentiveData)
             );
           }
           return response.sendSuccessResponse({ data: incentiveData }, res);

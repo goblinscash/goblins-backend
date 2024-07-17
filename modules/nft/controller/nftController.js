@@ -1,5 +1,8 @@
 const response = require("../../../utility/response");
-const { loadWalletTokenIds, loadContractTokenIds } = require("../../../helpers/nftHelper");
+const {
+  loadWalletTokenIds,
+  loadContractTokenIds,
+} = require("../../../helpers/nftHelper");
 
 module.exports = {
   walletAddressNft: async (req, res) => {
@@ -15,20 +18,20 @@ module.exports = {
           res
         );
       }
-      let resData = [];
-      if (payload.ownerNft) {
-        resData = await loadWalletTokenIds(
-          payload.chainId,
-          payload.walletAddress
-        );
-      } else {
-        resData = await loadContractTokenIds(
-          payload.chainId,
-          payload.walletAddress
-        );
-      }
 
-      return response.sendSuccessResponse({ data: resData }, res);
+      if (payload.ownerNft) {
+        let resData = await loadWalletTokenIds(
+          payload.chainId,
+          payload.walletAddress
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      } else {
+        let resData = await loadContractTokenIds(
+          payload.chainId,
+          payload.walletAddress
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      }
     } catch (error) {
       console.log(error, "<====error");
       return response.sendErrorResponse(error, res);

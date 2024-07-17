@@ -3,6 +3,7 @@ const Web3Intraction = require("../utility/web3Intraction");
 const loadWalletTokenIds = async (chainId, walletAddress) => {
   let tokens = [];
   const web3 = new Web3Intraction(chainId);
+
   for (let i = 0; i < 1000; i++) {
     try {
       let tokenId = await web3.getTokenId(walletAddress, i);
@@ -30,7 +31,6 @@ const loadWalletTokenIds = async (chainId, walletAddress) => {
         });
       }
     } catch (error) {
-
       break;
     }
   }
@@ -50,27 +50,33 @@ const loadContractTokenIds = async (chainId, walletAddress) => {
       let desposit = await web3.getDeposit(tokenId);
 
 
-      if (desposit.numberOfStakes == 0 && desposit.owner == walletAddress) {
-        let tokenURI = await web3.getTokenURI(tokenId);
+      if (desposit.owner == walletAddress) {
+        if (chainId == 10000) {
+          let tokenURI = await web3.getTokenURI(tokenId);
 
-        let base64String = tokenURI.replace(
-          /^data:application\/json;base64,/,
-          ""
-        );
+          let base64String = tokenURI.replace(
+            /^data:application\/json;base64,/,
+            ""
+          );
 
-        const decodedStr = Buffer.from(base64String, "base64").toString(
-          "utf-8"
-        );
-        const decodedData = JSON.parse(decodedStr);
-        tokens.push({
-          ...decodedData,
-          value: tokenId,
-          label: decodedData.name,
-        });
+          const decodedStr = Buffer.from(base64String, "base64").toString(
+            "utf-8"
+          );
+          const decodedData = JSON.parse(decodedStr);
+          tokens.push({
+            ...decodedData,
+            value: tokenId,
+            label: decodedData.name,
+          });
+        } else {
+          tokens.push({
+            image: "/dfd.jpg",
+            value: tokenId,
+            label: tokenId,
+          });
+        }
       }
     } catch (error) {
-    
-
       break;
     }
   }
@@ -80,5 +86,5 @@ const loadContractTokenIds = async (chainId, walletAddress) => {
 
 module.exports = {
   loadWalletTokenIds,
-  loadContractTokenIds
+  loadContractTokenIds,
 };

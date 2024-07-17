@@ -16,13 +16,17 @@ function createFallbackProvider(rpcUrls) {
     .map((url) => {
       try {
         const provider = new ethers.getDefaultProvider(url);
+// console.log(provider, "<====provider")
+
         return provider;
       } catch (error) {
+console.log(error, "<====error")
+
         return null;
       }
     })
     .filter((provider) => provider !== null);
-
+// console.log(providers, "<====providers")
   if (providers.length === 0) {
     throw new Error("No valid providers were created.");
   }
@@ -199,7 +203,7 @@ class Web3Intraction {
 
         resolve(response.toString());
       } catch (error) {
-        // console.log(error, "<===error in buy");
+        console.log(error, "<===error in getTokenId");
         if (error?.code === -32603) {
           return reject("insufficient funds for intrinsic transaction cost");
         }
