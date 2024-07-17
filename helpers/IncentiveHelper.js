@@ -226,12 +226,13 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
 
     const getUniqueTokenId = getUniqueToken(tokenStakeds);
 
+
     let myFarm = [];
     for (let d = 0; d < getUniqueTokenId.length; d++) {
       let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
-console.log(getUniqueTokenId[d].tokenId,desposit, "<====desposit")
+
       if (desposit.owner === walletAddress) {
-console.log(desposit, "<====owner")
+
 
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
