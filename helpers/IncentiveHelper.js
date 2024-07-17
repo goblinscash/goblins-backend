@@ -229,7 +229,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
     let myFarm = [];
     for (let d = 0; d < getUniqueTokenId.length; d++) {
       let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
-console.log(tokenId,desposit, "<====desposit")
+console.log(getUniqueTokenId[d].tokenId,desposit, "<====desposit")
       if (desposit.owner === walletAddress) {
 console.log(desposit, "<====owner")
 
