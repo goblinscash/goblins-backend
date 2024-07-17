@@ -6,7 +6,6 @@ const cors = require("cors");
 const helmet = require("helmet");
 const app = express();
 
-require("./cron");
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/public", express.static(__dirname + "/public"));
@@ -35,5 +34,8 @@ let env = require("./config/env.prod.json");
 global.env = env;
 //all routes
 require("./routes/mainRoutes")(app);
+
+require("./cron");
+
 
 module.exports = app;
