@@ -271,14 +271,22 @@ module.exports = {
 
         case "End":
           if (incentiveData) {
+
+            console.log(payload.incentiveId, "<===payload.incentiveId")
             let newData = incentiveData.availableFarm.filter(
               (data) => data.incentiveId !== payload.incentiveId
             );
+
+            console.log(newData, "<===newData")
+
 
             incentiveData = {
               availableFarm: newData,
               ...incentiveData,
             };
+
+            console.log(incentiveData, "<===incentiveData")
+
             await redisFunc.setString(
               payload.chainId.toString(),
               JSON.stringify(incentiveData)
