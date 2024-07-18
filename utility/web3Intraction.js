@@ -203,7 +203,7 @@ class Web3Intraction {
 
         resolve(response.toString());
       } catch (error) {
-        console.log(error, "<===error in getTokenId");
+        // console.log(error, "<===error in getTokenId");
         if (error?.code === -32603) {
           return reject("insufficient funds for intrinsic transaction cost");
         }
