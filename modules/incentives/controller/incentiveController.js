@@ -271,25 +271,22 @@ module.exports = {
 
         case "End":
           if (incentiveData) {
-
-            console.log(payload.incentiveId, "<===payload.incentiveId")
+            console.log(payload.incentiveId, "<===payload.incentiveId");
             let newData = incentiveData.availableFarm.filter(
               (data) => data.incentiveId !== payload.incentiveId
             );
 
-            console.log(newData, "<===newData")
-
-
-            incentiveData = {
+            console.log(newData, "<===newData");
+            let newIncentiveData = {
               availableFarm: newData,
               ...incentiveData,
             };
 
-            console.log(incentiveData, "<===incentiveData")
+            console.log(newIncentiveData, "<===newIncentiveData");
 
             await redisFunc.setString(
               payload.chainId.toString(),
-              JSON.stringify(incentiveData)
+              JSON.stringify(newIncentiveData)
             );
           }
           return response.sendSuccessResponse({ data: incentiveData }, res);
