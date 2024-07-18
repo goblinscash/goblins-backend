@@ -19,7 +19,13 @@ module.exports = {
         );
       }
 
-      if (payload.ownerNft) {
+      if (payload.withdrawNft) {
+        let resData = await loadWithdrawTokenIds(
+          payload.chainId,
+          payload.walletAddress
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      } else if (payload.ownerNft) {
         let resData = await loadWalletTokenIds(
           payload.chainId,
           payload.walletAddress
@@ -32,32 +38,6 @@ module.exports = {
         );
         return response.sendSuccessResponse({ data: resData }, res);
       }
-    } catch (error) {
-      console.log(error, "<====error");
-      return response.sendErrorResponse(error, res);
-    }
-  },
-
-  contractAddressNft: async (req, res) => {
-    try {
-      let payload = req.body;
-
-      if (!payload.chainId) {
-        return response.sendValidationErrorResponse("Chain Id Required", res);
-      }
-      if (!payload.walletAddress) {
-        return response.sendValidationErrorResponse(
-          "Wallet Address Required",
-          res
-        );
-      }
-
-      let resData = await loadWalletTokenIds(
-        payload.chainId,
-        payload.walletAddress
-      );
-
-      return response.sendSuccessResponse({ data: resData }, res);
     } catch (error) {
       console.log(error, "<====error");
       return response.sendErrorResponse(error, res);
