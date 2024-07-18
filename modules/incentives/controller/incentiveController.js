@@ -186,8 +186,8 @@ module.exports = {
 
           if (newCreate) {
             incentiveData = {
-              availableFarm: incentiveData.availableFarm.unshift(newCreate),
               ...incentiveData,
+              availableFarm: incentiveData.availableFarm.unshift(newCreate),
             };
 
             await redisFunc.setString(
@@ -271,15 +271,15 @@ module.exports = {
 
         case "End":
           if (incentiveData) {
-            console.log(payload.incentiveId, "<===payload.incentiveId");
+    
             let newData = incentiveData.availableFarm.filter(
-              (data) => data.incentiveId !== payload.incentiveId
+              (data) => data.incentiveId != payload.incentiveId
             );
 
-            console.log(newData, "<===newData");
+           
             let newIncentiveData = {
-              availableFarm: newData,
               ...incentiveData,
+              availableFarm: newData,
             };
 
             console.log(newIncentiveData.availableFarm, "<===newIncentiveData");
