@@ -8,7 +8,7 @@ const { makeComputeData } = require("./computeIncentive");
 const { getUniqueToken } = require("./common");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount) => {
-  // console.log(poolData.totalValueLockedUSD, rewardAmount, "<===data");
+  console.log(poolData.totalValueLockedUSD, rewardAmount, "<===data");
   const { startTime, endTime } = incentiveData;
   const rewardPeriodSeconds = endTime - startTime;
   const rewardPeriodYears = rewardPeriodSeconds / (365 * 24 * 60 * 60);
