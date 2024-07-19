@@ -16,17 +16,17 @@ function createFallbackProvider(rpcUrls) {
     .map((url) => {
       try {
         const provider = new ethers.getDefaultProvider(url);
-// console.log(provider, "<====provider")
+        // console.log(provider, "<====provider")
 
         return provider;
       } catch (error) {
-console.log(error, "<====error")
+        console.log(error, "<====error");
 
         return null;
       }
     })
     .filter((provider) => provider !== null);
-// console.log(providers, "<====providers")
+  // console.log(providers, "<====providers")
   if (providers.length === 0) {
     throw new Error("No valid providers were created.");
   }
@@ -202,6 +202,37 @@ class Web3Intraction {
         );
 
         resolve(response.toString());
+      } catch (error) {
+        // console.log(error, "<===error in getTokenId");
+        if (error?.code === -32603) {
+          return reject("insufficient funds for intrinsic transaction cost");
+        }
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
+  /**
+   * Get Nft Token Id
+   * @param {string} walletAddress own wallet address
+   * @param {string} index index
+   *
+   * @returns {Promise} Object (Transaction Hash, Contract Address) in Success or Error in Fail
+   */
+  getTokenLiquidity = async (tokenId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const contract = this.getContract(
+          JSON.stringify(NFTManager),
+          this.contractDetails?.nftManagerContractAddress,
+          true
+        );
+
+        const response = await contract.positions(tokenId);
+
+
+
+        resolve(response.liquidity.toString());
       } catch (error) {
         // console.log(error, "<===error in getTokenId");
         if (error?.code === -32603) {
