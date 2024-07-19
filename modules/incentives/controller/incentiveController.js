@@ -20,20 +20,21 @@ module.exports = {
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }
 
+      console.log("getData call");
       let data = null;
-      let farmData = await redisFunc.getString(payload.chainId.toString());
-      if (!farmData) {
-        data = await getIncentiveDetail(payload.chainId);
+      // let farmData = await redisFunc.getString(payload.chainId.toString());
+      // if (!farmData) {
+      data = await getIncentiveDetail(payload.chainId);
 
-        if (data) {
-          await redisFunc.setString(
-            payload.chainId.toString(),
-            JSON.stringify(data)
-          );
-        }
-      } else {
-        data = JSON.parse(farmData);
+      if (data) {
+        await redisFunc.setString(
+          payload.chainId.toString(),
+          JSON.stringify(data)
+        );
       }
+      // } else {
+      //   data = JSON.parse(farmData);
+      // }
 
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
@@ -271,12 +272,10 @@ module.exports = {
 
         case "End":
           if (incentiveData) {
-    
             let newData = incentiveData.availableFarm.filter(
               (data) => data.incentiveId != payload.incentiveId
             );
 
-           
             let newIncentiveData = {
               ...incentiveData,
               availableFarm: newData,

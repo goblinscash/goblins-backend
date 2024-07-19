@@ -3,12 +3,15 @@
         "10000": {
             "v3StakingContractAddress": "0x264136e16848008A689FAC1c121631ff6D44376E",
             "nftManagerContractAddress": "0x6Cf824f9556cEdE40710AD25BC26fd47f7063944",
-            "stakeContractAddress": "0xfA3D02c971F6D97076b8405500c2210476C6A5E8"
+            "stakeContractAddress": "0xfA3D02c971F6D97076b8405500c2210476C6A5E8",
+            "uniswapV3FactoryAddress":"0x08153648C209644a68ED4DC0aC06795F6563D17b"
         },
         "97": {
             "v3StakingContractAddress": "0x3b34a1c3ad4a9a89831828d765abdc5cdc125de8",
             "nftManagerContractAddress": "0x427bF5b37357632377eCbEC9de3626C71A5396c1",
-            "stakeContractAddress": "0x6abfa0F99e42159Dee2Deff686e331Fc5600029c"
+            "stakeContractAddress": "0x6abfa0F99e42159Dee2Deff686e331Fc5600029c",
+            "uniswapV3FactoryAddress":""
+
         }
     },
     "graphQLUrl": {
@@ -35,5 +38,7 @@
     },
     "poolDetailGraphQL": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
 
-    "supportedChain": ["10000", "97"]
+    "supportedChain": ["10000", "97"],
+    "feeTiers":[10000, 3000, 500, 100]
 }
+

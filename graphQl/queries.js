@@ -55,6 +55,7 @@ const getPoolDetailQuery = `
       feeTier
       volumeToken0
       volumeToken1
+      totalValueLockedUSD
     }
   }
 `;
