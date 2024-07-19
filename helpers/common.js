@@ -5,6 +5,17 @@ const getUniqueToken = (data) => {
   return uniqueData;
 };
 
+function findKeyBySymbol(pool, symbol) {
+  for (let key in pool) {
+
+    if (pool[key] && pool[key].symbol && pool[key].symbol === symbol) {
+      return key;
+    }
+  }
+  return null;
+}
+
 module.exports = {
   getUniqueToken,
+  findKeyBySymbol
 };

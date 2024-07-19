@@ -7,21 +7,21 @@ const Web3Intraction = require("../utility/web3Intraction");
 const { makeComputeData } = require("./computeIncentive");
 const { getUniqueToken } = require("./common");
 
-const calculateAPR = (poolData) => {
-  const { liquidity, token1Price, feeTier, volumeToken1, token0 } = poolData;
+const calculateAPR = (poolData, incentiveData, rewardAmount) => {
+  // console.log(poolData.totalValueLockedUSD, rewardAmount, "<===data");
+  const { startTime, endTime } = incentiveData;
+  const rewardPeriodSeconds = endTime - startTime;
+  const rewardPeriodYears = rewardPeriodSeconds / (365 * 24 * 60 * 60);
 
-  let dailyFee = volumeToken1 * (feeTier / 10000);
-
-  let annualFeeRevenue = dailyFee * 365;
-  let liqudityInEth = Number(liquidity) / 10 ** token0.decimals;
-
-  let totalLiquidity = parseFloat(liqudityInEth) * parseFloat(token1Price);
-
-  const apr = (parseFloat(annualFeeRevenue) / totalLiquidity) * 100;
+  // Calculate APR
+  const apr =
+    (rewardAmount / poolData.totalValueLockedUSD) *
+    (1 / rewardPeriodYears) *
+    100;
 
   return {
     apr: apr > 1 ? Number(apr).toFixed(2) : Number(apr).toFixed(4),
-    tvl: totalLiquidity,
+    tvl: poolData.totalValueLockedUSD,
   };
 };
 
@@ -45,11 +45,14 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
       let poolData = await getPool(incentiveData.pool);
       pool = poolData.pool;
     }
-    let aprData = pool ? calculateAPR(pool, incentiveData) : null;
     // console.log(aprData, "<===aprdata");
     if (Number(incentiveData.endTime) > moment().unix()) {
       nftCount = await web3.nftCount(makeIncentiveId);
     }
+
+    let aprData = pool
+      ? calculateAPR(pool, incentiveData, incentiveData.reward)
+      : null;
 
     let data = {
       apr: aprData?.apr || 0,
@@ -158,7 +161,13 @@ const getIncentiveDetail = async (chainId) => {
         pool = poolData.pool;
       }
 
-      let aprData = pool ? calculateAPR(pool, incentiveCreateds[i]) : null;
+      let aprData = pool
+        ? calculateAPR(
+            pool,
+            incentiveCreateds[i],
+            incentiveCreateds[i].reward.toString() / 10 ** tokenData.decimal
+          )
+        : null;
 
       // console.log(aprData, "<===aprdata");
 
@@ -226,14 +235,11 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
 
     const getUniqueTokenId = getUniqueToken(tokenStakeds);
 
-
     let myFarm = [];
     for (let d = 0; d < getUniqueTokenId.length; d++) {
       let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
 
       if (desposit.owner === walletAddress) {
-
-
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
             let keyData = [
