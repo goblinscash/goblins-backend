@@ -20,7 +20,6 @@ module.exports = {
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }
 
-      console.log("getData call");
       let data = null;
       let farmData = await redisFunc.getString(payload.chainId.toString());
       if (!farmData) {
