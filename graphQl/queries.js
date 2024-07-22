@@ -26,7 +26,7 @@ let getMyFarmQuery = `query {
       refundee
       reward
     },
-    tokenStakeds(orderBy: blockTimestamp) {
+    tokenStakeds(first:1000) {
      tokenId
    }
 
