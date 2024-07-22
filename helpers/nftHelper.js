@@ -102,8 +102,13 @@ const loadWithdrawTokenIds = async (chainId, walletAddress) => {
       );
       let desposit = await web3.getDeposit(tokenId);
 
+   
       if (desposit.numberOfStakes == 0 && desposit.owner == walletAddress) {
+
         let tokenLiquidity = await web3.getTokenLiquidity(tokenId);
+
+
+        
         if (tokenLiquidity > 0) {
           if (chainId == 10000) {
             let tokenURI = await web3.getTokenURI(tokenId);

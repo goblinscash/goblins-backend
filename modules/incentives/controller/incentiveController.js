@@ -23,14 +23,14 @@ module.exports = {
       let data = null;
       let farmData = await redisFunc.getString(payload.chainId.toString());
       if (!farmData) {
-      data = await getIncentiveDetail(payload.chainId);
+        data = await getIncentiveDetail(payload.chainId);
 
-      if (data) {
-        await redisFunc.setString(
-          payload.chainId.toString(),
-          JSON.stringify(data)
-        );
-      }
+        if (data) {
+          await redisFunc.setString(
+            payload.chainId.toString(),
+            JSON.stringify(data)
+          );
+        }
       } else {
         data = JSON.parse(farmData);
       }
@@ -83,6 +83,38 @@ module.exports = {
         }
       } else {
         data = JSON.parse(farmData);
+      }
+
+      return response.sendSuccessResponse({ data: data }, res);
+    } catch (error) {
+      console.log(error, "<====error");
+      return response.sendErrorResponse(error, res);
+    }
+  },
+
+  updateMyFarm: async (req, res) => {
+    try {
+      let payload = req.body;
+
+      if (!payload.chainId) {
+        return response.sendValidationErrorResponse("Chain Id Required", res);
+      }
+      if (!payload.walletAddress) {
+        return response.sendValidationErrorResponse(
+          "Wallet Address Required",
+          res
+        );
+      }
+
+      let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
+
+      if (data) {
+        await redisFunc.setString(
+          payload.walletAddress.toLowerCase() +
+            "_" +
+            payload.chainId.toString(),
+          JSON.stringify(data)
+        );
       }
 
       return response.sendSuccessResponse({ data: data }, res);
