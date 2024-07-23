@@ -35,7 +35,7 @@ module.exports = {
         data = JSON.parse(farmData);
       }
 
-      console.log(data, "<===data")
+      // console.log(data.availableFarm, "<===data");
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
           (item) => Number(item.key.endTime) > currentTime
@@ -198,6 +198,8 @@ module.exports = {
       }
 
       let incentiveData = await redisFunc.getString(payload.chainId.toString());
+
+      console.log(incentiveData, "<===incentiveData");
       incentiveData = JSON.parse(incentiveData);
 
       let farmData = null;
@@ -217,11 +219,13 @@ module.exports = {
             payload.createdData
           );
 
+          // console.log(newCreate, "<====newCreate");
           if (newCreate) {
             incentiveData = {
               ...incentiveData,
-              availableFarm: incentiveData.availableFarm.unshift(newCreate),
+              availableFarm: [...incentiveData.availableFarm, newCreate],
             };
+            // console.log(incentiveData.availableFarm, "<====incentiveData");
 
             await redisFunc.setString(
               payload.chainId.toString(),
