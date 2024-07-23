@@ -35,6 +35,7 @@ module.exports = {
         data = JSON.parse(farmData);
       }
 
+      console.log(data, "<===data")
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
           (item) => Number(item.key.endTime) > currentTime
