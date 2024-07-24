@@ -209,7 +209,7 @@ module.exports = {
           if (newCreate) {
             incentiveData = {
               ...incentiveData,
-              availableFarm: [...incentiveData.availableFarm, newCreate],
+              availableFarm: [newCreate,...incentiveData.availableFarm],
             };
             // console.log(incentiveData.availableFarm, "<====incentiveData");
 
