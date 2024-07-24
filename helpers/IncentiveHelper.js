@@ -168,7 +168,7 @@ const getIncentiveDetail = async (chainId) => {
           )
         : null;
 
-      console.log(aprData, "<===aprdata");
+  
 
       if (Number(incentiveCreateds[i].endTime) > moment().unix()) {
         nftCount = await web3.nftCount(makeIncentiveId);
