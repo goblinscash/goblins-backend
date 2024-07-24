@@ -138,26 +138,14 @@ module.exports = {
           res
         );
       }
-
       let incentiveData = await redisFunc.getString(payload.chainId.toString());
-
       if (!incentiveData) {
         return response.sendValidationErrorResponse(
           "Try Again After Sometime",
           res
         );
       }
-
       incentiveData = JSON.parse(incentiveData);
-
-      // let farmData = await redisFunc.getString(
-      //   "deleted" +
-      //     "_" +
-      //     payload.walletAddress.toLowerCase() +
-      //     "_" +
-      //     payload.chainId.toString()
-      // );
-      // if (!farmData) {
       let data = await getDeletedDataForClaim(
         payload.chainId,
         payload.walletAddress,
@@ -175,9 +163,6 @@ module.exports = {
           JSON.stringify(data)
         );
       }
-      // } else {
-      //   data = JSON.parse(farmData);
-      // }
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {
@@ -307,24 +292,16 @@ module.exports = {
           break;
 
         case "End":
-          if (incentiveData) {
-            let newData = incentiveData.availableFarm.filter(
-              (data) => data.incentiveId != payload.incentiveId
-            );
+          let getNewIncenties = await getIncentiveDetail(payload.chainId);
 
-            let newIncentiveData = {
-              ...incentiveData,
-              availableFarm: newData,
-            };
-
-            console.log(newIncentiveData.availableFarm, "<===newIncentiveData");
-
+          if (getNewIncenties) {
             await redisFunc.setString(
               payload.chainId.toString(),
-              JSON.stringify(newIncentiveData)
+              JSON.stringify(getNewIncenties)
             );
           }
-          return response.sendSuccessResponse({ data: incentiveData }, res);
+
+          return response.sendSuccessResponse({ data: getNewIncenties }, res);
 
           break;
 
