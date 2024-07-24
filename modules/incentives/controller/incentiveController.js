@@ -307,7 +307,7 @@ module.exports = {
               availableFarm: newData,
             };
 
-            console.log(newIncentiveData.availableFarm, "<===newIncentiveData");
+
 
             await redisFunc.setString(
               payload.chainId.toString(),
