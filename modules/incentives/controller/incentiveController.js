@@ -163,6 +163,7 @@ module.exports = {
           JSON.stringify(data)
         );
       }
+ 
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {
@@ -292,16 +293,38 @@ module.exports = {
           break;
 
         case "End":
-          let getNewIncenties = await getIncentiveDetail(payload.chainId);
+          if (incentiveData) {
 
-          if (getNewIncenties) {
+            
+
+
+            let newData = incentiveData.availableFarm.filter(
+              (data) => data.incentiveId != payload.incentiveId
+            );
+
+            let newIncentiveData = {
+              ...incentiveData,
+              availableFarm: newData,
+            };
+
+            console.log(newIncentiveData.availableFarm, "<===newIncentiveData");
+
             await redisFunc.setString(
               payload.chainId.toString(),
-              JSON.stringify(getNewIncenties)
+              JSON.stringify(newIncentiveData)
             );
+
+            let getNewIncenties = await getIncentiveDetail(payload.chainId);
+
+            if (getNewIncenties) {
+              await redisFunc.setString(
+                payload.chainId.toString(),
+                JSON.stringify(getNewIncenties)
+              );
+            }
           }
 
-          return response.sendSuccessResponse({ data: getNewIncenties }, res);
+          return response.sendSuccessResponse({ data: incentiveData }, res);
 
           break;
 
