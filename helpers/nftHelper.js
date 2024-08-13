@@ -25,7 +25,7 @@ const loadWalletTokenIds = async (chainId, walletAddress) => {
           tokens.push({
             ...decodedData,
             value: tokenId,
-            label: decodedData.name + `(${tokenId})`,
+            label: decodedData.name + ` (#${tokenId})`,
           });
         } else {
           tokens.push({
@@ -72,7 +72,7 @@ const loadContractTokenIds = async (chainId, walletAddress) => {
             tokens.push({
               ...decodedData,
               value: tokenId,
-              label: decodedData.name + `(${tokenId})`,
+              label: decodedData.name + ` (#${tokenId})`,
             });
           } else {
             tokens.push({
@@ -125,7 +125,7 @@ const loadWithdrawTokenIds = async (chainId, walletAddress) => {
             tokens.push({
               ...decodedData,
               value: tokenId,
-              label: decodedData.name + `(${tokenId})`,
+              label: decodedData.name + ` (#${tokenId})`,
             });
           } else {
             tokens.push({
