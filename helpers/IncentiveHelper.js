@@ -5,18 +5,28 @@ const request = require("../graphQl/requests");
 const CONST = require("../config/constant.json");
 const Web3Intraction = require("../utility/web3Intraction");
 const { makeComputeData } = require("./computeIncentive");
-const { getUniqueToken } = require("./common");
+const { getUniqueToken, toFixedCustm } = require("./common");
+const { getTokenPriceInUSD } = require("./getPrice");
 
-const calculateAPR = (poolData, incentiveData, rewardAmount) => {
+const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
+
+
   const { startTime, endTime } = incentiveData;
   const rewardPeriodSeconds = endTime - startTime;
+  // const rewardPeriodYears =  (365 * 24 * 60 * 60);
   const rewardPeriodYears = rewardPeriodSeconds / (365 * 24 * 60 * 60);
 
+  let calculateReward = usdPrice ? rewardAmount * usdPrice : rewardAmount;
+
+  calculateReward = Number(calculateReward).toFixed(2);
+
+
   // Calculate APR
-  const apr =
-    (rewardAmount / poolData.totalValueLockedUSD) *
-    (1 / rewardPeriodYears) *
-    100;
+  const apr = toFixedCustm(
+    (calculateReward / poolData.totalValueLockedUSD) *
+      (1 / rewardPeriodYears) *
+      100
+  );
 
   return {
     apr: apr > 1 ? Number(apr).toFixed(2) : Number(apr).toFixed(4),
@@ -49,8 +59,10 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
       nftCount = await web3.nftCount(makeIncentiveId);
     }
 
+    let rewardPricing = await getTokenPriceInUSD(incentiveData.rewardToken);
+
     let aprData = pool
-      ? calculateAPR(pool, incentiveData, incentiveData.reward)
+      ? calculateAPR(pool, incentiveData, incentiveData.reward, rewardPricing)
       : null;
 
     let data = {
@@ -135,6 +147,7 @@ const getDepositIncentiveData = async (
 const getIncentiveDetail = async (chainId) => {
   try {
     let myData = [];
+    let rewardTokenPriceData = {};
     let { incentiveCreateds, incentiveEndeds } = await getIncentiveData(
       chainId
     );
@@ -153,6 +166,14 @@ const getIncentiveDetail = async (chainId) => {
         incentiveCreateds[i].endTime,
         incentiveCreateds[i].refundee,
       ]);
+      let rewardPricing = null;
+      if (!rewardTokenPriceData?.[incentiveCreateds[i].rewardToken]) {
+        rewardPricing = await getTokenPriceInUSD(
+          incentiveCreateds[i].rewardToken
+        );
+
+        rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
+      }
       let pool = null;
 
       if (chainId == 10000) {
@@ -164,11 +185,11 @@ const getIncentiveDetail = async (chainId) => {
         ? calculateAPR(
             pool,
             incentiveCreateds[i],
-            incentiveCreateds[i].reward.toString() / 10 ** tokenData.decimal
+            incentiveCreateds[i].reward.toString() / 10 ** tokenData.decimal,
+            rewardPricing ||
+              rewardTokenPriceData[incentiveCreateds[i].rewardToken]
           )
         : null;
-
-  
 
       if (Number(incentiveCreateds[i].endTime) > moment().unix()) {
         nftCount = await web3.nftCount(makeIncentiveId);
@@ -178,6 +199,7 @@ const getIncentiveDetail = async (chainId) => {
         apr: aprData?.apr || 0,
         tvl: aprData?.tvl || 0,
         incentiveId: makeIncentiveId,
+
         feeTier: Number(pool?.feeTier || 0) / 10000,
         getPoolDetail: {
           token0Symbol: pool?.token0?.symbol,
