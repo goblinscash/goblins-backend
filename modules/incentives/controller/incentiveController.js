@@ -22,7 +22,7 @@ module.exports = {
 
       let data = null;
       let farmData = await redisFunc.getString(payload.chainId.toString());
-      // if (!farmData) {
+      if (!farmData) {
         data = await getIncentiveDetail(payload.chainId);
 
         if (data) {
@@ -31,9 +31,9 @@ module.exports = {
             JSON.stringify(data)
           );
         }
-      // } else {
-      //   data = JSON.parse(farmData);
-      // }
+      } else {
+        data = JSON.parse(farmData);
+      }
 
       // console.log(data.availableFarm, "<===data");
       if (!payload.isEnded) {
