@@ -3,6 +3,7 @@ const {
   loadWalletTokenIds,
   loadContractTokenIds,
   loadWithdrawTokenIds,
+  loadStakeTokenIds
 } = require("../../../helpers/nftHelper");
 
 module.exports = {
@@ -19,8 +20,13 @@ module.exports = {
           res
         );
       }
-
-      if (payload.withdrawNft) {
+      if (payload.stakedNft) {
+        let resData = await loadStakeTokenIds(
+          payload.chainId,
+          payload.walletAddress
+        );
+        return response.sendSuccessResponse({ data: resData }, res);
+      } else if (payload.withdrawNft) {
         let resData = await loadWithdrawTokenIds(
           payload.chainId,
           payload.walletAddress
