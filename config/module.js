@@ -13,6 +13,14 @@ const moduleConfig = [
     route: true,
     routeName: "nft",
   },
+
+  {
+    type: "trxn",
+    apiVersion: "v1",
+    status: true,
+    route: true,
+    routeName: "trxn",
+  },
 ];
 module.exports = moduleConfig;
 

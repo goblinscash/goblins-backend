@@ -9,8 +9,6 @@ const { getUniqueToken, toFixedCustm } = require("./common");
 const { getTokenPriceInUSD } = require("./getPrice");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
-
-
   const { startTime, endTime } = incentiveData;
   const rewardPeriodSeconds = endTime - startTime;
   // const rewardPeriodYears =  (365 * 24 * 60 * 60);
@@ -19,7 +17,6 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   let calculateReward = usdPrice ? rewardAmount * usdPrice : rewardAmount;
 
   calculateReward = Number(calculateReward).toFixed(2);
-
 
   // Calculate APR
   const apr = toFixedCustm(
@@ -255,12 +252,16 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
     const web3 = new Web3Intraction(chainId);
 
     const getUniqueTokenId = getUniqueToken(tokenStakeds);
+    console.log(getUniqueTokenId, "<====getUniqueTokenId");
 
     let myFarm = [];
     for (let d = 0; d < getUniqueTokenId.length; d++) {
       let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
-
+      if (getUniqueTokenId[d].tokenId == "537") {
+        console.log(desposit, walletAddress, "<====data");
+      }
       if (desposit.owner === walletAddress) {
+        console.log(desposit.owner, "<====desposit.owner");
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
             let keyData = [

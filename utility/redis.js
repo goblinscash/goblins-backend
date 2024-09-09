@@ -3,8 +3,8 @@ class RedisHelper {
   constructor() {
     this.client = null;
     //   this.clientInternal = null;
-    this.host = global.env.REDIS_HOST;
-    this.port = global.env.REDIS_PORT || 6379;
+    this.host = global.env?.REDIS_HOST || "localhost:6379";
+    this.port = global.env?.REDIS_PORT || 6379;
     this.connectRedis();
   }
 

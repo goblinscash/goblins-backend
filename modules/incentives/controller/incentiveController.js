@@ -108,7 +108,7 @@ module.exports = {
       }
 
       let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-
+console.log(data, "<=====data")
       if (data) {
         await redisFunc.setString(
           payload.walletAddress.toLowerCase() +
