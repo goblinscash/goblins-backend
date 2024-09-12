@@ -246,22 +246,29 @@ const getIncentiveDetail = async (chainId) => {
 
 const getMyFarmDetail = async (chainId, walletAddress) => {
   try {
-    let { incentiveCreateds, tokenStakeds } = await getMyFarmData(chainId);
+    let { incentiveCreateds } = await getMyFarmData(chainId);
 
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
     const web3 = new Web3Intraction(chainId);
 
-    const getUniqueTokenId = getUniqueToken(tokenStakeds);
-    console.log(getUniqueTokenId, "<====getUniqueTokenId");
+
+
 
     let myFarm = [];
-    for (let d = 0; d < getUniqueTokenId.length; d++) {
-      let desposit = await web3.getDeposit(getUniqueTokenId[d].tokenId);
-      if (getUniqueTokenId[d].tokenId == "537") {
-        console.log(desposit, walletAddress, "<====data");
-      }
+
+    for (let i = 0; i < 100000; i++) {
+      try {
+        let tokenId = await web3.getTokenId(
+          web3.contractDetails.v3StakingContractAddress,
+          i
+        );
+        console.log(tokenId, "<====tokenId")
+      let desposit = await web3.getDeposit(tokenId);
+
+
       if (desposit.owner === walletAddress) {
-        console.log(desposit.owner, "<====desposit.owner");
+      console.log(desposit, "<====desposit")
+
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
             let keyData = [
@@ -273,7 +280,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
             ];
             let getRewards = await web3.getRewardInfo(
               keyData,
-              getUniqueTokenId[d].tokenId
+              tokenId
             );
 
             if (getRewards) {
@@ -295,7 +302,8 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
               let tokenData = await web3.getTokenDecimal(
                 incentiveCreateds[i].rewardToken
               );
-              myFarm.push({
+              myFarm.push(
+                {
                 id: incentiveCreateds[i].id,
                 feeTier: Number(pool?.feeTier || 0) / 10000,
                 incentiveId: makeIncentiveId,
@@ -309,7 +317,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
                   incentiveCreateds[i].reward.toString() /
                   10 ** tokenData.decimal,
                 rewardSymbol: tokenData.symbol,
-                tokenId: getUniqueTokenId[d].tokenId,
+                tokenId: tokenId,
                 isUnstaked: false,
                 rewardInfo: {
                   reward:
@@ -323,14 +331,23 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
                   endTime: incentiveCreateds[i].endTime,
                   refundee: incentiveCreateds[i].refundee,
                 },
-              });
+              }
+
+              );
             }
           } catch (error) {
             console.log(error, "<====err in getMyFarmData");
           }
         }
       }
+    
+      } catch (error) {
+
+        console.log(error, "<=====error to got token")
+        break;
+      }
     }
+  
 
     return myFarm;
   } catch (error) {

@@ -42,7 +42,7 @@ async function getTokenPriceInUSD(
   tokenAddress
 ) {
   try {
-    console.log("getTokenPriceInUSD call");
+ 
     // Setup Ethers
     const stablecoinAddress = "0xBc2F884680c95A02cea099dA2F524b366d9028Ba"; //  (e.g., USDT)
     const getTokenAndUsdtPair = await getPool(tokenAddress, stablecoinAddress);
