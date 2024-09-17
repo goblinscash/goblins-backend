@@ -6,14 +6,11 @@ const { getUnStakeLogs } = require("../../../script/getTransactionUnstake");
 module.exports = {
   getStakingTransaction: async (req, res) => {
     try {
-
-
       let payload = req.body;
 
       if (!payload.chainId) {
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }
-
 
       let stakeTransaction = await redisFunc.getString(
         payload.chainId.toString() + "StakingTransaction"
@@ -24,12 +21,10 @@ module.exports = {
 
       let data = null;
       if (!stakeTransaction || !unStakeTransaction) {
-
-
         data = {
           stakeTransaction: await getLogs(1000),
           unStakeTransaction: await getUnStakeLogs(1000),
-        }
+        };
       } else {
         data = {
           stakeTransaction: JSON.parse(stakeTransaction),
