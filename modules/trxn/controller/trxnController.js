@@ -1,6 +1,7 @@
 const response = require("../../../utility/response");
 const redisFunc = require("../../../utility/redis");
 const { getLogs } = require("../../../script/getTransaction");
+const { getUnStakeLogs } = require("../../../script/getTransactionUnstake");
 
 module.exports = {
   getStakingTransaction: async (req, res) => {
@@ -14,15 +15,26 @@ module.exports = {
       }
 
 
-      let transactionData = await redisFunc.getString(
+      let stakeTransaction = await redisFunc.getString(
         payload.chainId.toString() + "StakingTransaction"
+      );
+      let unStakeTransaction = await redisFunc.getString(
+        payload.chainId.toString() + "UnStakingTransaction"
       );
 
       let data = null;
-      if (!transactionData) {
-        data = await getLogs(payload.chainId);
+      if (!stakeTransaction || !unStakeTransaction) {
+
+
+        data = {
+          stakeTransaction: await getLogs(1000),
+          unStakeTransaction: await getUnStakeLogs(1000),
+        }
       } else {
-        data = JSON.parse(transactionData);
+        data = {
+          stakeTransaction: JSON.parse(stakeTransaction),
+          unStakeTransaction: JSON.parse(unStakeTransaction),
+        };
       }
 
       return response.sendSuccessResponse({ data: data }, res);
