@@ -48,7 +48,6 @@ async function getLogs(chainId) {
 
 
 
-getLogs(10000);
 
 
 module.exports={
