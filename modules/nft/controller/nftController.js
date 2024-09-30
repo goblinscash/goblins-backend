@@ -10,7 +10,6 @@ module.exports = {
   walletAddressNft: async (req, res) => {
     try {
       let payload = req.body;
-
       if (!payload.chainId) {
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }

@@ -18,9 +18,7 @@ async function getLogs(chainId) {
     fromBlock: 0, // Starting block (replace with actual deployment block if known)
     toBlock: "latest", // Latest block
     address: contractAddress, // Contract address to track
-    topics: [
-      "0x9e71bc8eea02a63969f509818f2dafb9254532904319f9dbda79b67bd34a5f3d",
-    ],
+    topics: ["0x9e71bc8eea02a63969f509818f2dafb9254532904319f9dbda79b67bd34a5f3d"],
   };
 
   const logs = await provider.getLogs(filter);

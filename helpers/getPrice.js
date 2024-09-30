@@ -39,14 +39,15 @@ async function getPool(tokenA, tokenB) {
 }
 
 async function getTokenPriceInUSD(
-  tokenAddress
+  tokenAddress,
+  chainId
 ) {
   try {
  
     // Setup Ethers
     const stablecoinAddress = "0xBc2F884680c95A02cea099dA2F524b366d9028Ba"; //  (e.g., USDT)
     const getTokenAndUsdtPair = await getPool(tokenAddress, stablecoinAddress);
-    const getPoolDetails = request.getPoolDetails(poolDetailGraphQL);
+    const getPoolDetails = request.getPoolDetails(poolDetailGraphQL[chainId || 10000]);
     if (!getTokenAndUsdtPair) {
       return null;
     }
@@ -58,7 +59,6 @@ async function getTokenPriceInUSD(
       ? Number(poolData.token0Price).toFixed(2)
       : Number(poolData.token1Price).toFixed(2);
   } catch (error) {
-    console.log(error, "<====error in getTokenPriceInUSD");
     return null;
   }
 }

@@ -11,29 +11,21 @@ const loadWalletTokenIds = async (chainId, walletAddress) => {
       let tokenLiquidity = await web3.getTokenLiquidity(tokenId);
 
       if (tokenLiquidity > 0) {
-        if (chainId === 10000) {
-          let tokenURI = await web3.getTokenURI(tokenId);
-          let base64String = tokenURI.replace(
-            /^data:application\/json;base64,/,
-            ""
-          );
+        let tokenURI = await web3.getTokenURI(tokenId);
+        let base64String = tokenURI.replace(
+          /^data:application\/json;base64,/,
+          ""
+        );
 
-          const decodedStr = Buffer.from(base64String, "base64").toString(
-            "utf-8"
-          );
-          const decodedData = JSON.parse(decodedStr);
-          tokens.push({
-            ...decodedData,
-            value: tokenId,
-            label: decodedData.name + ` (#${tokenId})`,
-          });
-        } else {
-          tokens.push({
-            image: "/dfd.jpg",
-            value: tokenId,
-            label: tokenId,
-          });
-        }
+        const decodedStr = Buffer.from(base64String, "base64").toString(
+          "utf-8"
+        );
+        const decodedData = JSON.parse(decodedStr);
+        tokens.push({
+          ...decodedData,
+          value: tokenId,
+          label: decodedData.name + ` (#${tokenId})`,
+        });
       }
     } catch (error) {
       break;
@@ -57,30 +49,22 @@ const loadContractTokenIds = async (chainId, walletAddress) => {
       if (desposit.owner == walletAddress) {
         let tokenLiquidity = await web3.getTokenLiquidity(tokenId);
         if (tokenLiquidity > 0) {
-          if (chainId == 10000) {
-            let tokenURI = await web3.getTokenURI(tokenId);
+          let tokenURI = await web3.getTokenURI(tokenId);
 
-            let base64String = tokenURI.replace(
-              /^data:application\/json;base64,/,
-              ""
-            );
+          let base64String = tokenURI.replace(
+            /^data:application\/json;base64,/,
+            ""
+          );
 
-            const decodedStr = Buffer.from(base64String, "base64").toString(
-              "utf-8"
-            );
-            const decodedData = JSON.parse(decodedStr);
-            tokens.push({
-              ...decodedData,
-              value: tokenId,
-              label: decodedData.name + ` (#${tokenId})`,
-            });
-          } else {
-            tokens.push({
-              image: "/dfd.jpg",
-              value: tokenId,
-              label: tokenId,
-            });
-          }
+          const decodedStr = Buffer.from(base64String, "base64").toString(
+            "utf-8"
+          );
+          const decodedData = JSON.parse(decodedStr);
+          tokens.push({
+            ...decodedData,
+            value: tokenId,
+            label: decodedData.name + ` (#${tokenId})`,
+          });
         }
       }
     } catch (error) {
@@ -102,38 +86,26 @@ const loadWithdrawTokenIds = async (chainId, walletAddress) => {
       );
       let desposit = await web3.getDeposit(tokenId);
 
-   
       if (desposit.numberOfStakes == 0 && desposit.owner == walletAddress) {
-
         let tokenLiquidity = await web3.getTokenLiquidity(tokenId);
 
-
-        
         if (tokenLiquidity > 0) {
-          if (chainId == 10000) {
-            let tokenURI = await web3.getTokenURI(tokenId);
+          let tokenURI = await web3.getTokenURI(tokenId);
 
-            let base64String = tokenURI.replace(
-              /^data:application\/json;base64,/,
-              ""
-            );
+          let base64String = tokenURI.replace(
+            /^data:application\/json;base64,/,
+            ""
+          );
 
-            const decodedStr = Buffer.from(base64String, "base64").toString(
-              "utf-8"
-            );
-            const decodedData = JSON.parse(decodedStr);
-            tokens.push({
-              ...decodedData,
-              value: tokenId,
-              label: decodedData.name + ` (#${tokenId})`,
-            });
-          } else {
-            tokens.push({
-              image: "/dfd.jpg",
-              value: tokenId,
-              label: tokenId,
-            });
-          }
+          const decodedStr = Buffer.from(base64String, "base64").toString(
+            "utf-8"
+          );
+          const decodedData = JSON.parse(decodedStr);
+          tokens.push({
+            ...decodedData,
+            value: tokenId,
+            label: decodedData.name + ` (#${tokenId})`,
+          });
         }
       }
     } catch (error) {
@@ -143,7 +115,6 @@ const loadWithdrawTokenIds = async (chainId, walletAddress) => {
 
   return tokens;
 };
-
 
 const loadStakeTokenIds = async (chainId, walletAddress) => {
   let tokens = [];
@@ -156,35 +127,25 @@ const loadStakeTokenIds = async (chainId, walletAddress) => {
       );
       let desposit = await web3.getDeposit(tokenId);
 
-   
       if (desposit.numberOfStakes > 0 && desposit.owner == walletAddress) {
-
         let tokenLiquidity = await web3.getTokenLiquidity(tokenId);
         if (tokenLiquidity > 0) {
-          if (chainId == 10000) {
-            let tokenURI = await web3.getTokenURI(tokenId);
+          let tokenURI = await web3.getTokenURI(tokenId);
 
-            let base64String = tokenURI.replace(
-              /^data:application\/json;base64,/,
-              ""
-            );
+          let base64String = tokenURI.replace(
+            /^data:application\/json;base64,/,
+            ""
+          );
 
-            const decodedStr = Buffer.from(base64String, "base64").toString(
-              "utf-8"
-            );
-            const decodedData = JSON.parse(decodedStr);
-            tokens.push({
-              ...decodedData,
-              value: tokenId,
-              label: decodedData.name + ` (#${tokenId})`,
-            });
-          } else {
-            tokens.push({
-              image: "/dfd.jpg",
-              value: tokenId,
-              label: tokenId,
-            });
-          }
+          const decodedStr = Buffer.from(base64String, "base64").toString(
+            "utf-8"
+          );
+          const decodedData = JSON.parse(decodedStr);
+          tokens.push({
+            ...decodedData,
+            value: tokenId,
+            label: decodedData.name + ` (#${tokenId})`,
+          });
         }
       }
     } catch (error) {
@@ -199,5 +160,5 @@ module.exports = {
   loadWalletTokenIds,
   loadContractTokenIds,
   loadWithdrawTokenIds,
-  loadStakeTokenIds
+  loadStakeTokenIds,
 };

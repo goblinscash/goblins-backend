@@ -31,11 +31,9 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   };
 };
 
-///get single incentiveData from contract
-
 const createSingleIncentiveData = async (chainId, incentiveData) => {
   try {
-    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
+    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
     const web3 = new Web3Intraction(chainId);
     let nftCount = 0;
     let tokenData = await web3.getTokenDecimal(incentiveData.rewardToken);
@@ -56,7 +54,7 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
       nftCount = await web3.nftCount(makeIncentiveId);
     }
 
-    let rewardPricing = await getTokenPriceInUSD(incentiveData.rewardToken);
+    let rewardPricing = await getTokenPriceInUSD(incentiveData.rewardToken, chainId);
 
     let aprData = pool
       ? calculateAPR(pool, incentiveData, incentiveData.reward, rewardPricing)
@@ -148,7 +146,7 @@ const getIncentiveDetail = async (chainId) => {
     let { incentiveCreateds, incentiveEndeds } = await getIncentiveData(
       chainId
     );
-    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
+    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
     const web3 = new Web3Intraction(chainId);
     for (let i = 0; i < incentiveCreateds.length; i++) {
       let nftCount = 0;
@@ -166,7 +164,8 @@ const getIncentiveDetail = async (chainId) => {
       let rewardPricing = null;
       if (!rewardTokenPriceData?.[incentiveCreateds[i].rewardToken]) {
         rewardPricing = await getTokenPriceInUSD(
-          incentiveCreateds[i].rewardToken
+          incentiveCreateds[i].rewardToken,
+          chainId
         );
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
@@ -247,28 +246,18 @@ const getIncentiveDetail = async (chainId) => {
 const getMyFarmDetail = async (chainId, walletAddress) => {
   try {
     let { incentiveCreateds } = await getMyFarmData(chainId);
-
-    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL);
+    const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
     const web3 = new Web3Intraction(chainId);
 
-
-
-
     let myFarm = [];
-
     for (let i = 0; i < 100000; i++) {
       try {
         let tokenId = await web3.getTokenId(
           web3.contractDetails.v3StakingContractAddress,
           i
         );
-        console.log(tokenId, "<====tokenId")
       let desposit = await web3.getDeposit(tokenId);
-
-
       if (desposit.owner === walletAddress) {
-      console.log(desposit, "<====desposit")
-
         for (let i = 0; i < incentiveCreateds.length; i++) {
           try {
             let keyData = [
@@ -285,12 +274,10 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
 
             if (getRewards) {
               let pool = null;
-
               if (chainId == 10000) {
                 let poolData = await getPool(incentiveCreateds[i].pool);
                 pool = poolData.pool;
               }
-
               let makeIncentiveId = await makeComputeData([
                 incentiveCreateds[i].rewardToken,
                 incentiveCreateds[i].pool,
@@ -412,3 +399,5 @@ module.exports = {
   createSingleIncentiveData,
   getDepositIncentiveData,
 };
+
+
