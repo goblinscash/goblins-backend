@@ -41,7 +41,7 @@
     },
     "poolDetailGraphQL": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
-        "56": "http://192.168.18.68:8000/subgraphs/name/goblins/bsc-subgraph-v3"
+        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3"
     },
     "supportedChain": [
         "10000",

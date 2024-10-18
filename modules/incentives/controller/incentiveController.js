@@ -35,7 +35,6 @@ module.exports = {
         data = JSON.parse(farmData);
       }
 
-      // console.log(data.availableFarm, "<===data");
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
           (item) => Number(item.key.endTime) > currentTime
@@ -294,9 +293,6 @@ console.log(data, "<=====data")
 
         case "End":
           if (incentiveData) {
-
-            
-
 
             let newData = incentiveData.availableFarm.filter(
               (data) => data.incentiveId != payload.incentiveId

@@ -149,6 +149,9 @@ const getIncentiveDetail = async (chainId) => {
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
     const web3 = new Web3Intraction(chainId);
     for (let i = 0; i < incentiveCreateds.length; i++) {
+
+    console.log(incentiveCreateds[i], "incentiveCreateds[i]")
+
       let nftCount = 0;
       let tokenData = await web3.getTokenDecimal(
         incentiveCreateds[i].rewardToken
@@ -170,12 +173,13 @@ const getIncentiveDetail = async (chainId) => {
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
       }
-      let pool = null;
+      
 
-      if (chainId == 10000) {
+     
         let poolData = await getPool(incentiveCreateds[i].pool);
-        pool = poolData.pool;
-      }
+        console.log(poolData,"poolDataaaaaaaaaaaaaaaaaaaaaaaaaa")
+        let pool = poolData.pool;
+      
 
       let aprData = pool
         ? calculateAPR(
@@ -238,7 +242,7 @@ const getIncentiveDetail = async (chainId) => {
       incentiveEndeds,
     };
   } catch (error) {
-    console.log(error, "<====error");
+    console.log(error, "<====error in incentive helper");
     return null;
   }
 };
