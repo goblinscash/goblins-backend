@@ -32,8 +32,10 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
 };
 
 const createSingleIncentiveData = async (chainId, incentiveData) => {
+  console.log(chainId, "1111111111111")
   try {
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
+    console.log(getPool, "pool data")
     const web3 = new Web3Intraction(chainId);
     let nftCount = 0;
     let tokenData = await web3.getTokenDecimal(incentiveData.rewardToken);
@@ -45,10 +47,11 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
       incentiveData.refundee,
     ]);
     let pool = null;
-    if (chainId == 10000) {
+    // if (chainId == 10000) {
+      console.log(chainId, "chainId222222222222")
       let poolData = await getPool(incentiveData.pool);
       pool = poolData.pool;
-    }
+    // }
     // console.log(aprData, "<===aprdata");
     if (Number(incentiveData.endTime) > moment().unix()) {
       nftCount = await web3.nftCount(makeIncentiveId);
@@ -140,6 +143,7 @@ const getDepositIncentiveData = async (
 };
 
 const getIncentiveDetail = async (chainId) => {
+  // console.log(chainId, "chainIddddddddddddddddddddddddddd")
   try {
     let myData = [];
     let rewardTokenPriceData = {};
@@ -150,7 +154,7 @@ const getIncentiveDetail = async (chainId) => {
     const web3 = new Web3Intraction(chainId);
     for (let i = 0; i < incentiveCreateds.length; i++) {
 
-    console.log(incentiveCreateds[i], "incentiveCreateds[i]")
+    // console.log(incentiveCreateds[i], "incentiveCreateds[i]")
 
       let nftCount = 0;
       let tokenData = await web3.getTokenDecimal(
@@ -173,11 +177,9 @@ const getIncentiveDetail = async (chainId) => {
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
       }
-      
 
-     
         let poolData = await getPool(incentiveCreateds[i].pool);
-        console.log(poolData,"poolDataaaaaaaaaaaaaaaaaaaaaaaaaa")
+        // console.log(poolData,"poolDataaaaaaaaaaaaaaaaaaaaaaaaaa")
         let pool = poolData.pool;
       
 
@@ -248,6 +250,7 @@ const getIncentiveDetail = async (chainId) => {
 };
 
 const getMyFarmDetail = async (chainId, walletAddress) => {
+  console.log(chainId, "getMyFarmDetail")
   try {
     let { incentiveCreateds } = await getMyFarmData(chainId);
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
@@ -278,10 +281,11 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
 
             if (getRewards) {
               let pool = null;
-              if (chainId == 10000) {
+              // if (chainId == 10000) {
+                console.log(chainId, "333333333333")
                 let poolData = await getPool(incentiveCreateds[i].pool);
                 pool = poolData.pool;
-              }
+              // }
               let makeIncentiveId = await makeComputeData([
                 incentiveCreateds[i].rewardToken,
                 incentiveCreateds[i].pool,

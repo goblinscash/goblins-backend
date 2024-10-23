@@ -13,15 +13,19 @@ const {
 
 module.exports = {
   getData: async (req, res) => {
+    // console.log(req.body, "------------------")
     try {
       let payload = req.body;
+      // console.log(payload, "payload")
       const currentTime = moment().unix();
       if (!payload.chainId) {
+        // console.log(!payload.chainId, "00000000000000")
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }
 
       let data = null;
       let farmData = await redisFunc.getString(payload.chainId.toString());
+      // console.log(farmData, "11111111111111")
       if (!farmData) {
         data = await getIncentiveDetail(payload.chainId);
 
@@ -34,6 +38,9 @@ module.exports = {
       } else {
         data = JSON.parse(farmData);
       }
+
+
+      // console.log(data, "dataaaaaaaaaaa")
 
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
