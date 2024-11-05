@@ -38,27 +38,72 @@ async function getPool(tokenA, tokenB) {
   }
 }
 
-async function getTokenPriceInUSD(
-  tokenAddress,
-  chainId
-) {
-  try {
+// async function getTokenPriceInUSD(
+//   tokenAddress,
+//   chainId
+// ) {
+//   try {
  
-    // Setup Ethers
-    const stablecoinAddress = "0xBc2F884680c95A02cea099dA2F524b366d9028Ba"; //  (e.g., USDT)
-    const getTokenAndUsdtPair = await getPool(tokenAddress, stablecoinAddress);
+//     // Setup Ethers
+//     const stablecoinAddress = "0xBc2F884680c95A02cea099dA2F524b366d9028Ba"; //  (e.g., USDT)
+//     const getTokenAndUsdtPair = await getPool(tokenAddress, stablecoinAddress);
+//     const getPoolDetails = request.getPoolDetails(poolDetailGraphQL[chainId || 10000]);
+//     if (!getTokenAndUsdtPair) {
+//       return null;
+//     }
+
+//     let poolData = await getPoolDetails(getTokenAndUsdtPair.toLowerCase());
+//     let findKey = findKeyBySymbol(poolData.pool, "bcUSDT");
+//     poolData = poolData.pool;
+//     return findKey === "token0"
+//       ? Number(poolData.token0Price).toFixed(2)
+//       : Number(poolData.token1Price).toFixed(2);
+//   } catch (error) {
+//     return null;
+//   }
+// }
+
+async function getTokenPriceInUSD(tokenAddress, chainId) {
+  try {
+    const stablecoinAddresses = {
+      10000: "0xBc2F884680c95A02cea099dA2F524b366d9028Ba", // SBCH
+      56: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d", // BSC
+    };
+    const stablecoinSymbols = {
+      10000: "bcUSDT", // Symbol for SBCH
+      56: "USDC",      // Symbol for BSC
+    };
+
+    // Get the stablecoin address and symbol based on chainId
+    const stablecoinAddress = stablecoinAddresses[chainId];
+    const stablecoinSymbol = stablecoinSymbols[chainId];
+
+    if (!stablecoinAddress || !stablecoinSymbol) {
+      throw new Error("Stablecoin address or symbol not defined for this chain ID");
+    }
+
+    // Get the token and stablecoin pair for the pool
+    const getTokenAndStablecoinPair = await getPool(tokenAddress, stablecoinAddress);
     const getPoolDetails = request.getPoolDetails(poolDetailGraphQL[chainId || 10000]);
-    if (!getTokenAndUsdtPair) {
+
+    if (!getTokenAndStablecoinPair) {
       return null;
     }
 
-    let poolData = await getPoolDetails(getTokenAndUsdtPair.toLowerCase());
-    let findKey = findKeyBySymbol(poolData.pool, "bcUSDT");
+    // Retrieve pool details
+    let poolData = await getPoolDetails(getTokenAndStablecoinPair.toLowerCase());
+
+    // Find the price key based on the stablecoin symbol
+    let findKey = findKeyBySymbol(poolData.pool, stablecoinSymbol);
     poolData = poolData.pool;
+
+    // Return the token price in USD
     return findKey === "token0"
       ? Number(poolData.token0Price).toFixed(2)
       : Number(poolData.token1Price).toFixed(2);
+      
   } catch (error) {
+    console.error("Error fetching token price:", error);
     return null;
   }
 }
