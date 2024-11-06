@@ -25,7 +25,7 @@ module.exports = {
 
       let data = null;
       let farmData = await redisFunc.getString(payload.chainId.toString());
-      // if (!farmData) {
+      if (!farmData) {
         data = await getIncentiveDetail(payload.chainId);
         if (data) {
           await redisFunc.setString(
@@ -33,10 +33,10 @@ module.exports = {
             JSON.stringify(data)
           );
         }
-      // }
-      // else {
-      //   data = JSON.parse(farmData);
-      // }
+      }
+      else {
+        data = JSON.parse(farmData);
+      }
       if (!payload.isEnded) {
         let resData = data.availableFarm.filter(
           (item) => Number(item.key.endTime) > currentTime
