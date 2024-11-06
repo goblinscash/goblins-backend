@@ -4,6 +4,7 @@ const {
   contract,
   feeTiers,
   poolDetailGraphQL,
+  tokenPrice
 } = require("../config/constant.json");
 const request = require("../graphQl/requests");
 const { findKeyBySymbol } = require("./common");
@@ -65,10 +66,13 @@ async function getPool(tokenA, tokenB) {
 
 async function getTokenPriceInUSD(tokenAddress, chainId) {
   try {
+    // Setup stablecoin addresses by chain ID
     const stablecoinAddresses = {
       10000: "0xBc2F884680c95A02cea099dA2F524b366d9028Ba", // SBCH
       56: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d", // BSC
     };
+
+    // Define stablecoin symbols by chain ID
     const stablecoinSymbols = {
       10000: "bcUSDT", // Symbol for SBCH
       56: "USDC",      // Symbol for BSC
@@ -87,7 +91,9 @@ async function getTokenPriceInUSD(tokenAddress, chainId) {
     const getPoolDetails = request.getPoolDetails(poolDetailGraphQL[chainId || 10000]);
 
     if (!getTokenAndStablecoinPair) {
-      return null;
+      const _tokenUSDPrice = request.getTokenUSDPrice(tokenPrice[chainId || 10000])
+      const data = await _tokenUSDPrice(tokenAddress.toLowerCase())
+      return Number(data).toFixed(6);
     }
 
     // Retrieve pool details

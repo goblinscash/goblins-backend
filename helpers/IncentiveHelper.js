@@ -9,6 +9,12 @@ const { getUniqueToken, toFixedCustm } = require("./common");
 const { getTokenPriceInUSD } = require("./getPrice");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
+
+  // console.log(usdPrice, "<=====usdPrice", typeof(usdPrice))
+
+
+  usdPrice = parseFloat(usdPrice)
+
   const { startTime, endTime } = incentiveData;
   const rewardPeriodSeconds = endTime - startTime;
   // const rewardPeriodYears =  (365 * 24 * 60 * 60);
@@ -17,6 +23,7 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   let calculateReward = usdPrice ? rewardAmount * usdPrice : rewardAmount;
 
   calculateReward = Number(calculateReward).toFixed(2);
+  // console.log(calculateReward, "||", poolData.totalValueLockedUSD,"||",rewardPeriodYears)
 
   // Calculate APR
   const apr = toFixedCustm(
@@ -25,6 +32,8 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
       100
   );
 
+  // console.log(apr, "<=========APR")
+
   return {
     apr: apr > 1 ? Number(apr).toFixed(2) : Number(apr).toFixed(4),
     tvl: poolData.totalValueLockedUSD,
@@ -32,10 +41,8 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
 };
 
 const createSingleIncentiveData = async (chainId, incentiveData) => {
-  console.log(chainId, "1111111111111")
   try {
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
-    console.log(getPool, "pool data")
     const web3 = new Web3Intraction(chainId);
     let nftCount = 0;
     let tokenData = await web3.getTokenDecimal(incentiveData.rewardToken);
@@ -48,7 +55,6 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
     ]);
     let pool = null;
     // if (chainId == 10000) {
-      console.log(chainId, "chainId222222222222")
       let poolData = await getPool(incentiveData.pool);
       pool = poolData.pool;
     // }
@@ -174,6 +180,8 @@ const getIncentiveDetail = async (chainId) => {
           incentiveCreateds[i].rewardToken,
           chainId
         );
+
+        console.log(rewardPricing,incentiveCreateds[i].rewardToken, "<====reward data" )
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
       }

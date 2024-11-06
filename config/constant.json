@@ -16,6 +16,11 @@
         "56": "https://api.studio.thegraph.com/query/89726/bscv3stakerminwidth/1.0.0",
         "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5"
     },
+    "tokenPrice": {
+        "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
+        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3"
+    },
+
     "rpcUrls": {
         "10000": [
             "https://smartbch.greyh.at",
