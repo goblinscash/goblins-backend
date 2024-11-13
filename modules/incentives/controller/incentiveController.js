@@ -97,7 +97,6 @@ module.exports = {
   updateMyFarm: async (req, res) => {
     try {
       let payload = req.body;
-
       if (!payload.chainId) {
         return response.sendValidationErrorResponse("Chain Id Required", res);
       }
@@ -109,7 +108,6 @@ module.exports = {
       }
 
       let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-console.log(data, "<=====data")
       if (data) {
         await redisFunc.setString(
           payload.walletAddress.toLowerCase() +
@@ -186,7 +184,6 @@ console.log(data, "<=====data")
 
       let incentiveData = await redisFunc.getString(payload.chainId.toString());
 
-      console.log(incentiveData, "<===incentiveData");
       incentiveData = JSON.parse(incentiveData);
 
       let farmData = null;

@@ -28,8 +28,8 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   // Calculate APR
   const apr = toFixedCustm(
     (calculateReward / poolData.totalValueLockedUSD) *
-      (1 / rewardPeriodYears) *
-      100
+    (1 / rewardPeriodYears) *
+    100
   );
 
   // console.log(apr, "<=========APR")
@@ -55,8 +55,8 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
     ]);
     let pool = null;
     // if (chainId == 10000) {
-      let poolData = await getPool(incentiveData.pool);
-      pool = poolData.pool;
+    let poolData = await getPool(incentiveData.pool);
+    pool = poolData.pool;
     // }
     // console.log(aprData, "<===aprdata");
     if (Number(incentiveData.endTime) > moment().unix()) {
@@ -160,7 +160,7 @@ const getIncentiveDetail = async (chainId) => {
     const web3 = new Web3Intraction(chainId);
     for (let i = 0; i < incentiveCreateds.length; i++) {
 
-    // console.log(incentiveCreateds[i], "incentiveCreateds[i]")
+      // console.log(incentiveCreateds[i], "incentiveCreateds[i]")
 
       let nftCount = 0;
       let tokenData = await web3.getTokenDecimal(
@@ -181,24 +181,24 @@ const getIncentiveDetail = async (chainId) => {
           chainId
         );
 
-        console.log(rewardPricing,incentiveCreateds[i].rewardToken, "<====reward data" )
+        console.log(rewardPricing, incentiveCreateds[i].rewardToken, "<====reward data")
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
       }
 
-        let poolData = await getPool(incentiveCreateds[i].pool);
-        // console.log(poolData,"poolDataaaaaaaaaaaaaaaaaaaaaaaaaa")
-        let pool = poolData.pool;
-      
+      let poolData = await getPool(incentiveCreateds[i].pool);
+      // console.log(poolData,"poolDataaaaaaaaaaaaaaaaaaaaaaaaaa")
+      let pool = poolData.pool;
+
 
       let aprData = pool
         ? calculateAPR(
-            pool,
-            incentiveCreateds[i],
-            incentiveCreateds[i].reward.toString() / 10 ** tokenData.decimal,
-            rewardPricing ||
-              rewardTokenPriceData[incentiveCreateds[i].rewardToken]
-          )
+          pool,
+          incentiveCreateds[i],
+          incentiveCreateds[i].reward.toString() / 10 ** tokenData.decimal,
+          rewardPricing ||
+          rewardTokenPriceData[incentiveCreateds[i].rewardToken]
+        )
         : null;
 
       if (Number(incentiveCreateds[i].endTime) > moment().unix()) {
@@ -271,86 +271,86 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
           web3.contractDetails.v3StakingContractAddress,
           i
         );
-      let desposit = await web3.getDeposit(tokenId);
-      if (desposit.owner === walletAddress) {
-        for (let i = 0; i < incentiveCreateds.length; i++) {
-          try {
-            let keyData = [
-              incentiveCreateds[i].rewardToken,
-              incentiveCreateds[i].pool,
-              incentiveCreateds[i].startTime,
-              incentiveCreateds[i].endTime,
-              incentiveCreateds[i].refundee,
-            ];
-            let getRewards = await web3.getRewardInfo(
-              keyData,
-              tokenId
-            );
-
-            if (getRewards) {
-              let pool = null;
-              // if (chainId == 10000) {
-                console.log(chainId, "333333333333")
-                let poolData = await getPool(incentiveCreateds[i].pool);
-                pool = poolData.pool;
-              // }
-              let makeIncentiveId = await makeComputeData([
+        let desposit = await web3.getDeposit(tokenId);
+        if (desposit.owner === walletAddress) {
+          for (let i = 0; i < incentiveCreateds.length; i++) {
+            try {
+              let keyData = [
                 incentiveCreateds[i].rewardToken,
                 incentiveCreateds[i].pool,
                 incentiveCreateds[i].startTime,
                 incentiveCreateds[i].endTime,
                 incentiveCreateds[i].refundee,
-              ]);
-
-              let tokenData = await web3.getTokenDecimal(
-                incentiveCreateds[i].rewardToken
+              ];
+              let getRewards = await web3.getRewardInfo(
+                keyData,
+                tokenId
               );
-              myFarm.push(
-                {
-                id: incentiveCreateds[i].id,
-                feeTier: Number(pool?.feeTier || 0) / 10000,
-                incentiveId: makeIncentiveId,
-                getPoolDetail: {
-                  token0Symbol: pool?.token0?.symbol,
-                  token0Address: pool?.token0?.id,
-                  token1Symbol: pool?.token1?.symbol,
-                  token1Address: pool?.token1?.id,
-                },
-                reward:
-                  incentiveCreateds[i].reward.toString() /
-                  10 ** tokenData.decimal,
-                rewardSymbol: tokenData.symbol,
-                tokenId: tokenId,
-                isUnstaked: false,
-                rewardInfo: {
-                  reward:
-                    getRewards.reward.toString() / 10 ** tokenData.decimal,
-                },
 
-                key: {
-                  rewardToken: incentiveCreateds[i].rewardToken,
-                  pool: incentiveCreateds[i].pool,
-                  startTime: incentiveCreateds[i].startTime,
-                  endTime: incentiveCreateds[i].endTime,
-                  refundee: incentiveCreateds[i].refundee,
-                },
+              if (getRewards) {
+                let pool = null;
+                // if (chainId == 10000) {
+                console.log(chainId, "333333333333")
+                let poolData = await getPool(incentiveCreateds[i].pool);
+                pool = poolData.pool;
+                // }
+                let makeIncentiveId = await makeComputeData([
+                  incentiveCreateds[i].rewardToken,
+                  incentiveCreateds[i].pool,
+                  incentiveCreateds[i].startTime,
+                  incentiveCreateds[i].endTime,
+                  incentiveCreateds[i].refundee,
+                ]);
+
+                let tokenData = await web3.getTokenDecimal(
+                  incentiveCreateds[i].rewardToken
+                );
+                myFarm.push(
+                  {
+                    id: incentiveCreateds[i].id,
+                    feeTier: Number(pool?.feeTier || 0) / 10000,
+                    incentiveId: makeIncentiveId,
+                    getPoolDetail: {
+                      token0Symbol: pool?.token0?.symbol,
+                      token0Address: pool?.token0?.id,
+                      token1Symbol: pool?.token1?.symbol,
+                      token1Address: pool?.token1?.id,
+                    },
+                    reward:
+                      incentiveCreateds[i].reward.toString() /
+                      10 ** tokenData.decimal,
+                    rewardSymbol: tokenData.symbol,
+                    tokenId: tokenId,
+                    isUnstaked: false,
+                    rewardInfo: {
+                      reward: getRewards.reward.toString() / 10 ** tokenData.decimal,
+                      tokenDecimal: tokenData.decimal,
+                    },
+
+                    key: {
+                      rewardToken: incentiveCreateds[i].rewardToken,
+                      pool: incentiveCreateds[i].pool,
+                      startTime: incentiveCreateds[i].startTime,
+                      endTime: incentiveCreateds[i].endTime,
+                      refundee: incentiveCreateds[i].refundee,
+                    },
+                  }
+
+                );
               }
-
-              );
+            } catch (error) {
+              console.log(error, "<====err in getMyFarmData");
             }
-          } catch (error) {
-            console.log(error, "<====err in getMyFarmData");
           }
         }
-      }
-    
+
       } catch (error) {
 
         console.log(error, "<=====error to got token")
         break;
       }
     }
-  
+
 
     return myFarm;
   } catch (error) {
