@@ -9,16 +9,26 @@
             "v3StakingContractAddress": "0x44355c799dba57e6c22a9d7b3815dfF2A6FB0846",
             "nftManagerContractAddress": "0x32e9182879f62f2429879A1E7D491ccd37f2E613",
             "uniswapV3FactoryAddress": "0x30D9e1f894FBc7d2227Dd2a017F955d5586b1e14"
+        },
+        "8453": {
+            "v3StakingContractAddress": "0x07579501479896B286a0Bc9FF67100e99687Af35",
+            "nftManagerContractAddress": "0x3f11feF6633f9aF950426fEe3eaE6e68943E28A0",
+            "uniswapV3FactoryAddress": "0xE82Fa4d4Ff25bad8B07c4d1ebd50e83180DD5eB8"
         }
     },
     "graphQLUrl": {
         "10000": "https://graph.dfd.cash/subgraphs/name/v3stakerminwidths",
         "56": "https://api.studio.thegraph.com/query/89726/bscv3stakerminwidth/1.0.0",
-        "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5"
+        "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5",
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
+
     },
     "tokenPrice": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
-        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3"
+        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+
+
     },
 
     "rpcUrls": {
@@ -42,16 +52,22 @@
         "97": [
             "https://bsc-testnet-rpc.publicnode.com",
             "https://endpoints.omniatech.io/v1/bsc/testnet/public"
+        ],
+        "8453": [
+            "https://mainnet.base.org"
         ]
     },
     "poolDetailGraphQL": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
-        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3"
+        "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+
     },
     "supportedChain": [
         "10000",
         "97",
-        "56"
+        "56",
+        "8453"
     ],
     "feeTiers": [
         10000,
