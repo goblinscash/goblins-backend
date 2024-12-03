@@ -44,13 +44,8 @@
         "56": [
             "https://rpc.ankr.com/bsc",
             "https://bsc.drpc.org",
-            "https://bscrpc.com",
-            "https://bsc-dataseed.binance.org",
-            "https://bsc-dataseed1.defibit.io",
-            "https://bsc-dataseed1.ninicoin.io",
-            "https://rpc.ankr.com/bsc",
-            "https://bsc.mytokenpocket.vip",
-            "https://bscapi.terminet.io/rpc"
+            "https://bscrpc.com"
+       
         ],
         "97": [
             "https://bsc-testnet-rpc.publicnode.com",
@@ -79,3 +74,5 @@
         100
     ]
 }
+
+
