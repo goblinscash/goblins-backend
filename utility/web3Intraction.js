@@ -20,7 +20,7 @@ function createFallbackProvider(rpcUrls) {
 
         return provider;
       } catch (error) {
-        console.log(error, "<====error");
+        console.log(error, "<====error in provider");
 
         return null;
       }
