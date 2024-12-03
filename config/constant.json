@@ -20,13 +20,17 @@
         "10000": "https://graph.dfd.cash/subgraphs/name/v3stakerminwidths",
         "56": "https://api.studio.thegraph.com/query/89726/bscv3stakerminwidth/1.0.0",
         "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5",
-        "8453": "https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
+
     },
     "tokenPrice": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
         "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
-        "8453": "https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+
+
     },
+
     "rpcUrls": {
         "10000": [
             "https://smartbch.greyh.at",
@@ -40,7 +44,13 @@
         "56": [
             "https://rpc.ankr.com/bsc",
             "https://bsc.drpc.org",
-            "http: https://bscrpc.com"
+            "https://bscrpc.com",
+            "https://bsc-dataseed.binance.org",
+            "https://bsc-dataseed1.defibit.io",
+            "https://bsc-dataseed1.ninicoin.io",
+            "https://rpc.ankr.com/bsc",
+            "https://bsc.mytokenpocket.vip",
+            "https://bscapi.terminet.io/rpc"
         ],
         "97": [
             "https://bsc-testnet-rpc.publicnode.com",
@@ -53,7 +63,8 @@
     "poolDetailGraphQL": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
         "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
-        "8453": "https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
+
     },
     "supportedChain": [
         "10000",
