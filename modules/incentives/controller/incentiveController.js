@@ -108,14 +108,14 @@ module.exports = {
       }
 
       let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-      if (data) {
+      // if (data) {
         await redisFunc.setString(
           payload.walletAddress.toLowerCase() +
             "_" +
             payload.chainId.toString(),
           JSON.stringify(data)
         );
-      }
+      // }
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {

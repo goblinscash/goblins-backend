@@ -5,7 +5,7 @@ const request = require("../graphQl/requests");
 const CONST = require("../config/constant.json");
 const Web3Intraction = require("../utility/web3Intraction");
 const { makeComputeData } = require("./computeIncentive");
-const { getUniqueToken, toFixedCustm } = require("./common");
+const {  toFixedCustm } = require("./common");
 const { getTokenPriceInUSD } = require("./getPrice");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
@@ -181,7 +181,7 @@ const getIncentiveDetail = async (chainId) => {
           chainId
         );
 
-        console.log(rewardPricing, incentiveCreateds[i].rewardToken, "<====reward data")
+
 
         rewardTokenPriceData[incentiveCreateds[i].rewardToken] = rewardPricing;
       }
