@@ -5,7 +5,7 @@ const request = require("../graphQl/requests");
 const CONST = require("../config/constant.json");
 const Web3Intraction = require("../utility/web3Intraction");
 const { makeComputeData } = require("./computeIncentive");
-const {  toFixedCustm } = require("./common");
+const { toFixedCustm } = require("./common");
 const { getTokenPriceInUSD } = require("./getPrice");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
@@ -276,7 +276,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
         let desposit = await web3.getDeposit(tokenId);
         console.log(desposit, "<===desposit")
 
-        console.log(desposit.owner, walletAddress,desposit.owner === walletAddress, "<===desposit")
+        console.log(desposit.owner, walletAddress, desposit.owner === walletAddress, "<===desposit")
 
 
         if (desposit.owner === walletAddress) {
@@ -352,13 +352,15 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
         }
 
       } catch (error) {
+        console.log(error,error == "EnumerableSet: index out of bounds", "<=====error to got token")
+        if (error == "EnumerableSet: index out of bounds") {
 
-        console.log(error, "<=====error to got token")
-        break;
+          break;
+        }
       }
     }
 
-console.log(myFarm, "<===myfarm")
+    console.log(myFarm, "<===myfarm")
     return myFarm;
   } catch (error) {
     console.log(error, "<====err in getMyFarmData");
