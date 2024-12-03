@@ -272,13 +272,11 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
           i
         );
 
-        console.log(tokenId, "<===tokenId")
+       
         let desposit = await web3.getDeposit(tokenId);
-        console.log(desposit, "<===desposit")
+   
 
-        console.log(desposit.owner, walletAddress, desposit.owner === walletAddress, "<===desposit")
-
-
+   
         if (desposit.owner === walletAddress) {
           for (let i = 0; i < incentiveCreateds.length; i++) {
             try {
@@ -352,7 +350,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
         }
 
       } catch (error) {
-        console.log(error,error == "EnumerableSet: index out of bounds", "<=====error to got token")
+
         if (error == "EnumerableSet: index out of bounds") {
 
           break;
@@ -360,7 +358,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
       }
     }
 
-    console.log(myFarm, "<===myfarm")
+
     return myFarm;
   } catch (error) {
     console.log(error, "<====err in getMyFarmData");
