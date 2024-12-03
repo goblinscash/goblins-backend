@@ -78,8 +78,8 @@ module.exports = {
         if (data) {
           await redisFunc.setString(
             payload.walletAddress.toLowerCase() +
-              "_" +
-              payload.chainId.toString(),
+            "_" +
+            payload.chainId.toString(),
             JSON.stringify(data)
           );
         }
@@ -107,17 +107,22 @@ module.exports = {
         );
       }
 
+  
       console.log(payload, "<==== payload of updateMyfarm")
 
       let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-      // if (data) {
-        await redisFunc.setString(
-          payload.walletAddress.toLowerCase() +
-            "_" +
-            payload.chainId.toString(),
-          JSON.stringify(data)
-        );
-      // }
+      console.log(data, payload.walletAddress.toLowerCase() +
+        "_" +
+        payload.chainId.toString(), "<==== data of updateMyfarm")
+
+      if (data) {
+      await redisFunc.setString(
+        payload.walletAddress.toLowerCase() +
+        "_" +
+        payload.chainId.toString(),
+        JSON.stringify(data)
+      );
+      }
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {
@@ -157,14 +162,14 @@ module.exports = {
       if (data) {
         await redisFunc.setString(
           "deleted" +
-            "_" +
-            payload.walletAddress.toLowerCase() +
-            "_" +
-            payload.chainId.toString(),
+          "_" +
+          payload.walletAddress.toLowerCase() +
+          "_" +
+          payload.chainId.toString(),
           JSON.stringify(data)
         );
       }
- 
+
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {
@@ -209,7 +214,7 @@ module.exports = {
           if (newCreate) {
             incentiveData = {
               ...incentiveData,
-              availableFarm: [newCreate,...incentiveData.availableFarm],
+              availableFarm: [newCreate, ...incentiveData.availableFarm],
             };
             // console.log(incentiveData.availableFarm, "<====incentiveData");
 
@@ -245,8 +250,8 @@ module.exports = {
 
             await redisFunc.setString(
               payload.walletAddress.toLowerCase() +
-                "_" +
-                payload.chainId.toString(),
+              "_" +
+              payload.chainId.toString(),
               JSON.stringify(newData)
             );
           } else {
@@ -266,8 +271,8 @@ module.exports = {
 
               await redisFunc.setString(
                 payload.walletAddress.toLowerCase() +
-                  "_" +
-                  payload.chainId.toString(),
+                "_" +
+                payload.chainId.toString(),
                 JSON.stringify(newData)
               );
             }
@@ -283,8 +288,8 @@ module.exports = {
             );
             await redisFunc.setString(
               payload.walletAddress.toLowerCase() +
-                "_" +
-                payload.chainId.toString(),
+              "_" +
+              payload.chainId.toString(),
               JSON.stringify(newData)
             );
           }

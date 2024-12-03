@@ -351,7 +351,7 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
       }
     }
 
-
+console.log(myFarm, "<===myfarm")
     return myFarm;
   } catch (error) {
     console.log(error, "<====err in getMyFarmData");
