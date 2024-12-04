@@ -61,7 +61,7 @@ class RedisHelper {
     try {
       if (this.client) {
         let value = await this.client.get(key);
-        console.log('value:', value)
+     
         return value || false;
       } else {
         return false;
