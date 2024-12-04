@@ -96,7 +96,7 @@ const createSingleIncentiveData = async (chainId, incentiveData) => {
     };
     return data;
   } catch (error) {
-    console.log(error, "<====error");
+    console.log(error, "<====error in createSingleIncentiveData");
     return null;
   }
 };

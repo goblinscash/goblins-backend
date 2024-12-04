@@ -28,6 +28,8 @@ const loadWalletTokenIds = async (chainId, walletAddress) => {
         });
       }
     } catch (error) {
+    console.log(error, "<====error in loadWalletTokenIds");
+
       break;
     }
   }
