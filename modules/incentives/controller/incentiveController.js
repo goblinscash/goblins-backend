@@ -284,7 +284,7 @@ module.exports = {
             let newData = farmData.filter(
               (data) => data.incentiveId !== payload.incentiveId
             );
-            await redisFunc.setString(
+            await redisFunc.setStringWithExpiry(
               payload.walletAddress.toLowerCase() +
               "_" +
               payload.chainId.toString(),
