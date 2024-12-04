@@ -42,7 +42,9 @@
             "https://smartbch.devops.cash/mainnet"
         ],
         "56": [
-            "https://bsc-mainnet.infura.io/v3/afe99b8a94584b0385e4652f02662d07"
+            "https://rpc.ankr.com/bsc",
+            "https://bsc.drpc.org",
+            "https://bscrpc.com"
        
         ],
         "97": [
