@@ -76,7 +76,7 @@ module.exports = {
         data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
 
         if (data) {
-          await redisFunc.setString(
+          await redisFunc.setStringWithExpiry(
             payload.walletAddress.toLowerCase() +
             "_" +
             payload.chainId.toString(),
@@ -114,7 +114,7 @@ module.exports = {
 
 
       if (data) {
-      await redisFunc.setString(
+      await redisFunc.setStringWithExpiry(
         payload.walletAddress.toLowerCase() +
         "_" +
         payload.chainId.toString(),
@@ -246,7 +246,7 @@ module.exports = {
             }
             let newData = [...depositMultiData, ...farmData];
 
-            await redisFunc.setString(
+            await redisFunc.setStringWithExpiry(
               payload.walletAddress.toLowerCase() +
               "_" +
               payload.chainId.toString(),
@@ -267,7 +267,7 @@ module.exports = {
             if (depositData) {
               let newData = [depositData, ...farmData];
 
-              await redisFunc.setString(
+              await redisFunc.setStringWithExpiry(
                 payload.walletAddress.toLowerCase() +
                 "_" +
                 payload.chainId.toString(),
