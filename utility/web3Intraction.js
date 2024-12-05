@@ -36,7 +36,7 @@ function createFallbackProvider(rpcUrls) {
 
 class Web3Intraction {
   constructor(chainId, anotherRpc) {
-    console.log(anotherRpc, "<===anotherRpc");
+
     this.PROVIDER = createFallbackProvider(anotherRpc ? [anotherRpc] : CONST.rpcUrls[chainId || 10000]);
     // console.log(this.PROVIDER, "<===this.PROVIDER");
 
