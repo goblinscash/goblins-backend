@@ -181,7 +181,7 @@ module.exports = {
 
       console.log(deletedForClaim, "<====deletedForClaim")
 
-      if(!deletedForClaim || !deletedForClaim.length){
+      if(!deletedForClaim || deletedForClaim.length == 0){
 
          data = await getDeletedDataForClaim(
           payload.chainId,
