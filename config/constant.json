@@ -52,6 +52,7 @@
             "https://endpoints.omniatech.io/v1/bsc/testnet/public"
         ],
         "8453": [
+            "https://mainnet.base.org",
             "https://mainnet.base.org"
         ]
     },

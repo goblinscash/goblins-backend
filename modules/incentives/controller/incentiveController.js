@@ -165,6 +165,8 @@ module.exports = {
           res
         );
       }
+      const redisKey = `deleted_${payload.walletAddress.toLowerCase()}_${payload.chainId}`;
+
       let incentiveData = await redisFunc.getString(payload.chainId.toString());
       if (!incentiveData) {
         return response.sendValidationErrorResponse(
@@ -173,23 +175,30 @@ module.exports = {
         );
       }
       incentiveData = JSON.parse(incentiveData);
-      let data = await getDeletedDataForClaim(
-        payload.chainId,
-        payload.walletAddress,
-        incentiveData.deletedFarm,
-        incentiveData.incentiveEndeds
-      );
+
+      let deletedForClaim = await redisFunc.getString(redisKey)
+      let data=null;
+
+      if(!deletedForClaim || !deletedForClaim.length){
+
+         data = await getDeletedDataForClaim(
+          payload.chainId,
+          payload.walletAddress,
+          incentiveData.deletedFarm,
+          incentiveData.incentiveEndeds
+        );
+      
 
       if (data) {
-        await redisFunc.setString(
-          "deleted" +
-          "_" +
-          payload.walletAddress.toLowerCase() +
-          "_" +
-          payload.chainId.toString(),
+        await redisFunc.setStringWithExpiry(
+          redisKey,
           JSON.stringify(data)
         );
       }
+    }
+    else{
+      data = JSON.parse(deletedForClaim);
+    }
 
 
       return response.sendSuccessResponse({ data: data }, res);

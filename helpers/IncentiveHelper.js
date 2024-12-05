@@ -258,11 +258,11 @@ const getIncentiveDetail = async (chainId) => {
 };
 
 const getMyFarmDetail = async (chainId, walletAddress) => {
-  console.log(chainId, "getMyFarmDetail")
+
   try {
     let { incentiveCreateds } = await getMyFarmData(chainId);
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
-    const web3 = new Web3Intraction(chainId);
+    const web3 = new Web3Intraction(chainId, CONST.rpcUrls[chainId || 10000][1]);
 
     let myFarm = [];
     for (let i = 0; i < 100000; i++) {
@@ -373,6 +373,8 @@ const getDeletedDataForClaim = async (
   incentiveEndeds
 ) => {
   try {
+
+    console.log("getDeletedDataForClaim call")
     const web3 = new Web3Intraction(chainId);
     let myData = [];
     for (let i = 0; i < deletedIncentive.length; i++) {
