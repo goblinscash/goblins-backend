@@ -177,6 +177,7 @@ module.exports = {
       incentiveData = JSON.parse(incentiveData);
 
       let deletedForClaim = await redisFunc.getString(redisKey)
+      deletedForClaim= JSON.parse(deletedForClaim)
       let data=null;
 
       console.log(deletedForClaim, "<====deletedForClaim")
@@ -199,7 +200,7 @@ console.log("getDeletedDataForClaim call")
       }
     }
     else{
-      data = JSON.parse(deletedForClaim);
+      data = deletedForClaim;
     }
 
     console.log(data, "<====data")
