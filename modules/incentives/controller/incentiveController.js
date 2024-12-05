@@ -72,7 +72,9 @@ module.exports = {
       let farmData = await redisFunc.getString(
         payload.walletAddress.toLowerCase() + "_" + payload.chainId.toString()
       );
-      if (!farmData || !Array.isArray(farmData) || !farmData.length) {
+      if (!farmData || !farmData.length) {
+
+        console.log("getMyFarmDetail call")
         data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
 
         if (data) {
