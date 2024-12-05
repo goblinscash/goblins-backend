@@ -180,10 +180,9 @@ module.exports = {
       deletedForClaim= JSON.parse(deletedForClaim)
       let data=null;
 
-      console.log(deletedForClaim, "<====deletedForClaim")
 
       if(!deletedForClaim || deletedForClaim.length == 0){
-console.log("getDeletedDataForClaim call")
+
          data = await getDeletedDataForClaim(
           payload.chainId,
           payload.walletAddress,
