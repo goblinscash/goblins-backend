@@ -56,45 +56,66 @@ module.exports = {
 
   myFarm: async (req, res) => {
     try {
-      let payload = req.body;
-
+      const payload = req.body;
+  
+      // Validate payload
       if (!payload.chainId) {
-        return response.sendValidationErrorResponse("Chain Id Required", res);
+        return response.sendValidationErrorResponse("Chain ID is required.", res);
       }
       if (!payload.walletAddress) {
-        return response.sendValidationErrorResponse(
-          "Wallet Address Required",
-          res
-        );
+        return response.sendValidationErrorResponse("Wallet address is required.", res);
       }
-
-      let data = null;
-      let farmData = await redisFunc.getString(
-        payload.walletAddress.toLowerCase() + "_" + payload.chainId.toString()
-      );
-      if (!farmData || !farmData.length) {
-
-        console.log("getMyFarmDetail call")
-        data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-
-        if (data) {
-          await redisFunc.setStringWithExpiry(
-            payload.walletAddress.toLowerCase() +
-            "_" +
-            payload.chainId.toString(),
-            JSON.stringify(data)
-          );
+  
+      const redisKey = `${payload.walletAddress.toLowerCase()}_${payload.chainId}`;
+      let farmData;
+  
+      try {
+        // Attempt to fetch data from Redis
+        const cachedData = await redisFunc.getString(redisKey);
+  
+        if (cachedData) {
+          try {
+            farmData = JSON.parse(cachedData);
+  
+            // Ensure the cached data is valid
+            if (!Array.isArray(farmData) || farmData.length === 0) {
+              farmData = null;
+            }
+          } catch (parseError) {
+            console.warn(`Failed to parse cache for key: ${redisKey}`, parseError);
+            farmData = null; // Fall back to fresh data
+          }
         }
-      } else {
-        data = JSON.parse(farmData);
+      } catch (redisError) {
+        console.error("Redis error:", redisError);
+        // Proceed without Redis in case of failure
+        farmData = null;
       }
-
-      return response.sendSuccessResponse({ data: data }, res);
+  
+      // Fetch fresh data if no valid cache exists
+      if (!farmData) {
+        console.log("Fetching fresh data...");
+        farmData = await getMyFarmDetail(payload.chainId, payload.walletAddress);
+  
+        if (farmData) {
+          try {
+            // Cache the fresh data with expiry
+            await redisFunc.setStringWithExpiry(redisKey, JSON.stringify(farmData));
+          } catch (cacheError) {
+            console.warn("Failed to cache farm data:", cacheError);
+          }
+        }
+      }
+  
+      // Respond with the farm data
+      return response.sendSuccessResponse({ data: farmData || [] }, res);
+  
     } catch (error) {
-      console.log(error, "<====error");
-      return response.sendErrorResponse(error, res);
+      console.error("Unexpected error in myFarm:", error);
+      return response.sendErrorResponse("An unexpected error occurred. Please try again.", res);
     }
   },
+  
 
   updateMyFarm: async (req, res) => {
     try {
