@@ -202,12 +202,11 @@ module.exports = {
       data = deletedForClaim;
     }
 
-    console.log(data, "<====data")
 
 
       return response.sendSuccessResponse({ data: data }, res);
     } catch (error) {
-      console.log(error, "<====error");
+      console.log(error, "<====error in deletedFarm");
       return response.sendErrorResponse(error, res);
     }
   },
