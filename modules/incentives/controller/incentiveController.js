@@ -182,7 +182,7 @@ module.exports = {
       console.log(deletedForClaim, "<====deletedForClaim")
 
       if(!deletedForClaim || deletedForClaim.length == 0){
-
+console.log("getDeletedDataForClaim call")
          data = await getDeletedDataForClaim(
           payload.chainId,
           payload.walletAddress,
