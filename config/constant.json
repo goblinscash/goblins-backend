@@ -34,7 +34,7 @@
     "rpcUrls": {
         "10000": [
             "https://smartbch.greyh.at",
-            "https://smartbch.fountainhead.cash/mainnet",
+            "https://smartbch.greyh.at",
             "https://global.uat.cash",
             "https://rpc.uatvo.com",
             "https://api.tatum.io/v3/blockchain/node/bch-mainnet ",
