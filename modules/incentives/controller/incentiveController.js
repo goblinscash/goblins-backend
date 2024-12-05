@@ -179,6 +179,8 @@ module.exports = {
       let deletedForClaim = await redisFunc.getString(redisKey)
       let data=null;
 
+      console.log(deletedForClaim, "<====deletedForClaim")
+
       if(!deletedForClaim || !deletedForClaim.length){
 
          data = await getDeletedDataForClaim(
@@ -199,6 +201,8 @@ module.exports = {
     else{
       data = JSON.parse(deletedForClaim);
     }
+
+    console.log(data, "<====data")
 
 
       return response.sendSuccessResponse({ data: data }, res);
