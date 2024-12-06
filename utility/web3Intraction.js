@@ -35,6 +35,7 @@ function createFallbackProvider(rpcUrls) {
 }
 
 class Web3Intraction {
+
   constructor(chainId, anotherRpc) {
     this.PROVIDER = createFallbackProvider(anotherRpc ? [anotherRpc] : CONST.rpcUrls[chainId || 10000]);
 
@@ -43,6 +44,7 @@ class Web3Intraction {
       ...CONST.contract[chainId || 10000],
     };
   }
+
 
   /**
    * Get contract from abi and address
@@ -63,13 +65,14 @@ class Web3Intraction {
     }
   };
 
+
   /**
    * Get Deposit in Incentive
    *
    * @param {string} tokenId token id
    *
    * @returns {Promise} Object (Transaction Hash, Contract Address) in Success or Error in Fail
-   */
+   **/
   getDeposit = async (tokenId) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -92,6 +95,7 @@ class Web3Intraction {
       }
     });
   };
+
 
   /**
    * Get stakes in Incentive
@@ -128,6 +132,7 @@ class Web3Intraction {
     });
   };
 
+
   /**
    * Get Rewards in Incentive
    * @param {array} keys [reward token, pool address,start time, endTime, refundee address]
@@ -148,6 +153,7 @@ class Web3Intraction {
       return null;
     }
   };
+
 
   /**
    * Get Rewards in Incentive
@@ -178,6 +184,7 @@ class Web3Intraction {
       }
     });
   };
+
 
   /**
    * Get Nft Token Id
@@ -211,6 +218,7 @@ class Web3Intraction {
     });
   };
 
+
   /**
    * Get Nft Token Id
    * @param {string} walletAddress own wallet address
@@ -242,6 +250,7 @@ class Web3Intraction {
     });
   };
 
+
   /**
    * Get Nft Token URI
    * @param {string} tokenId own wallet address
@@ -272,6 +281,7 @@ class Web3Intraction {
     });
   };
 
+
   getTokenDecimal = async (tokenAddress) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -297,6 +307,7 @@ class Web3Intraction {
     });
   };
 
+
   /**
    *
    * @returns {Promise} Object (Transaction Hash, Contract Address) in Success or Error in Fail
@@ -321,6 +332,7 @@ class Web3Intraction {
       }
     });
   };
+
 
   /**
    *
@@ -354,6 +366,7 @@ class Web3Intraction {
       }
     });
   };
+
 
   /**
    * Get NFT 
@@ -393,6 +406,8 @@ class Web3Intraction {
       }
     });
   };
+
+
 }
 
 module.exports = Web3Intraction;
