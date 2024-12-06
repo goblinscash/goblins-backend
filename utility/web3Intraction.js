@@ -36,9 +36,7 @@ function createFallbackProvider(rpcUrls) {
 
 class Web3Intraction {
   constructor(chainId, anotherRpc) {
-
     this.PROVIDER = createFallbackProvider(anotherRpc ? [anotherRpc] : CONST.rpcUrls[chainId || 10000]);
-    // console.log(this.PROVIDER, "<===this.PROVIDER");
 
     this.contractDetails = {
       abi: UniswapV3Staker,
