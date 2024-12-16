@@ -3,17 +3,20 @@
         "10000": {
             "v3StakingContractAddress": "0x264136e16848008A689FAC1c121631ff6D44376E",
             "nftManagerContractAddress": "0x6Cf824f9556cEdE40710AD25BC26fd47f7063944",
-            "uniswapV3FactoryAddress": "0x08153648C209644a68ED4DC0aC06795F6563D17b"
+            "uniswapV3FactoryAddress": "0x08153648C209644a68ED4DC0aC06795F6563D17b",
+            "stakingContractAddress" : "0xfA3D02c971F6D97076b8405500c2210476C6A5E8"
         },
         "56": {
             "v3StakingContractAddress": "0x44355c799dba57e6c22a9d7b3815dfF2A6FB0846",
             "nftManagerContractAddress": "0x32e9182879f62f2429879A1E7D491ccd37f2E613",
-            "uniswapV3FactoryAddress": "0x30D9e1f894FBc7d2227Dd2a017F955d5586b1e14"
+            "uniswapV3FactoryAddress": "0x30D9e1f894FBc7d2227Dd2a017F955d5586b1e14",
+            "stakingContractAddress" : "0xB4D117f9c404652030F3d12f6DE58172317a2eDa"
         },
         "8453": {
             "v3StakingContractAddress": "0x07579501479896B286a0Bc9FF67100e99687Af35",
             "nftManagerContractAddress": "0x3f11feF6633f9aF950426fEe3eaE6e68943E28A0",
-            "uniswapV3FactoryAddress": "0xE82Fa4d4Ff25bad8B07c4d1ebd50e83180DD5eB8"
+            "uniswapV3FactoryAddress": "0xE82Fa4d4Ff25bad8B07c4d1ebd50e83180DD5eB8",
+            "stakingContractAddress" : "0xAAFa8A16121939414B529289fA69F08aefE51769"
         }
     },
     "graphQLUrl": {

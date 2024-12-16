@@ -10,6 +10,8 @@ const UniswapV3Staker = require("./ABI/UniswapV3Staker.json");
 const NFTManager = require("./ABI/NonfungiblePositionManager.json");
 const PancakeV3Pool = require("./ABI/PancakeV3Pool.json");
 const UniswapV3Factory = require("./ABI/UniswapV3Factory.json");
+const StakingABI = require("./ABI/StakingABI.json");
+const { toFixedCustm } = require("../helpers/common");
 
 function createFallbackProvider(rpcUrls) {
   const providers = rpcUrls
@@ -390,6 +392,83 @@ class Web3Intraction {
         // console.log(apr, "<===apr")
 
         resolve(getPool);
+      } catch (error) {
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
+  /**
+   * Get stakes in Incentive
+   *
+   * @param {string} tokenId token id
+   * @param {string} incentiveId incentive id
+   *
+   * @returns {Promise} Object (Transaction Hash, Contract Address) in Success or Error in Fail
+   */
+  getGobStakes = async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let contract = this.getContract(
+          JSON.stringify(StakingABI),
+          this.contractDetails?.stakingContractAddress,
+          true
+        );
+
+        let totalSupply = await contract.totalSupply();
+
+        totalSupply = totalSupply.toString() / 10 ** 9;
+        resolve(totalSupply);
+      } catch (error) {
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
+  getAPR = async (totalSupply, rewardTokenPrice, GOBPrice) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        rewardTokenPrice = Number(rewardTokenPrice);
+        GOBPrice = Number(GOBPrice);
+
+        let contract = this.getContract(
+          JSON.stringify(StakingABI),
+          this.contractDetails?.stakingContractAddress,
+          true
+        );
+        let rewardsToken = await contract.rewardsToken();
+        let getTokenData = await this.getTokenSymbolAndDecimal(rewardsToken);
+        let rewardRate = await contract.rewardRate();
+        rewardRate = rewardRate.toString() / 10 ** getTokenData.tokenDecimal;
+        rewardRate = toFixedCustm(rewardRate);
+        const secondsInAYear = 365 * 24 * 60 * 60;
+
+        const apr = 
+          ((rewardRate * rewardTokenPrice * secondsInAYear) /
+            (totalSupply * GOBPrice)) *
+          100;
+
+        resolve(apr > 1 ? Number(apr).toFixed(2) : Number(apr).toFixed(4));
+      } catch (error) {
+        console.log(error)
+        reject(0);
+      }
+    });
+  };
+
+  getTokenSymbolAndDecimal = async (tokenAddress) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let tokenContract = this.getContract(
+          JSON.stringify(TokenABI),
+          tokenAddress,
+          true
+        );
+
+        let tokenDecimal = await tokenContract.decimals();
+        let symbol = await tokenContract.symbol();
+
+        resolve({ tokenDecimal: tokenDecimal, symbol: symbol });
       } catch (error) {
         reject(error.reason || error.data?.message || error.message || error);
       }

@@ -21,6 +21,13 @@ const moduleConfig = [
     route: true,
     routeName: "trxn",
   },
+  {
+    type: "price",
+    apiVersion: "v1",
+    status: true,
+    route: true,
+    routeName: "price",
+  },
 ];
 module.exports = moduleConfig;
 

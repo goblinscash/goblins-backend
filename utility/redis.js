@@ -55,6 +55,21 @@ class RedisHelper {
     }
   }
 
+  async setStringsWithExpiry(key, value, ex) {
+    try {
+      if (this.client) {
+        let status = await this.client.set(key, value,{ EX: ex } ); ///expire after 20 mints
+        console.log("status", status);
+  
+        return (status == "OK" && true) || false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      console.log("setstringcatch===>", e);
+      return false;
+    }
+  }
 
 
   async getString(key) {

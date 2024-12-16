@@ -5,10 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const app = express();
+const connectToDatabase = require("./config/db")
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/public", express.static(__dirname + "/public"));
+
+connectToDatabase()
 
 app.use(cors());
 // Use helmet for general security headers
@@ -30,7 +33,6 @@ app.use(
 //Environment Setup
 
 let env = require("./config/env.prod.json");
-
 global.env = env;
 //all routes
 require("./routes/mainRoutes")(app);
