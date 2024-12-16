@@ -57,7 +57,7 @@ module.exports = {
   myFarm: async (req, res) => {
     try {
       const payload = req.body;
-  
+
       // Validate payload
       if (!payload.chainId) {
         return response.sendValidationErrorResponse("Chain ID is required.", res);
@@ -65,18 +65,18 @@ module.exports = {
       if (!payload.walletAddress) {
         return response.sendValidationErrorResponse("Wallet address is required.", res);
       }
-  
+
       const redisKey = `${payload.walletAddress.toLowerCase()}_${payload.chainId}`;
       let farmData;
-  
+
       try {
         // Attempt to fetch data from Redis
         const cachedData = await redisFunc.getString(redisKey);
-  
+
         if (cachedData) {
           try {
             farmData = JSON.parse(cachedData);
-  
+
             // Ensure the cached data is valid
             if (!Array.isArray(farmData) || farmData.length === 0) {
               farmData = null;
@@ -91,12 +91,12 @@ module.exports = {
         // Proceed without Redis in case of failure
         farmData = null;
       }
-  
+
       // Fetch fresh data if no valid cache exists
       if (!farmData) {
         console.log("Fetching fresh data...");
         farmData = await getMyFarmDetail(payload.chainId, payload.walletAddress);
-  
+
         if (farmData) {
           try {
             // Cache the fresh data with expiry
@@ -106,16 +106,16 @@ module.exports = {
           }
         }
       }
-  
+
       // Respond with the farm data
       return response.sendSuccessResponse({ data: farmData || [] }, res);
-  
+
     } catch (error) {
       console.error("Unexpected error in myFarm:", error);
       return response.sendErrorResponse("An unexpected error occurred. Please try again.", res);
     }
   },
-  
+
 
   updateMyFarm: async (req, res) => {
     try {
@@ -130,19 +130,19 @@ module.exports = {
         );
       }
 
-  
+
 
 
       let data = await getMyFarmDetail(payload.chainId, payload.walletAddress);
 
 
       if (data) {
-      await redisFunc.setStringWithExpiry(
-        payload.walletAddress.toLowerCase() +
-        "_" +
-        payload.chainId.toString(),
-        JSON.stringify(data)
-      );
+        await redisFunc.setStringWithExpiry(
+          payload.walletAddress.toLowerCase() +
+          "_" +
+          payload.chainId.toString(),
+          JSON.stringify(data)
+        );
       }
 
       return response.sendSuccessResponse({ data: data }, res);
@@ -177,30 +177,30 @@ module.exports = {
       incentiveData = JSON.parse(incentiveData);
 
       let deletedForClaim = await redisFunc.getString(redisKey)
-      deletedForClaim= JSON.parse(deletedForClaim)
-      let data=null;
+      deletedForClaim = JSON.parse(deletedForClaim)
+      let data = null;
 
 
-      if(!deletedForClaim || deletedForClaim.length == 0){
+      if (payload.reCallContract || !deletedForClaim || deletedForClaim.length == 0) {
 
-         data = await getDeletedDataForClaim(
+        data = await getDeletedDataForClaim(
           payload.chainId,
           payload.walletAddress,
           incentiveData.deletedFarm,
           incentiveData.incentiveEndeds
         );
-      
 
-      if (data) {
-        await redisFunc.setStringWithExpiry(
-          redisKey,
-          JSON.stringify(data)
-        );
+
+        if (data) {
+          await redisFunc.setStringWithExpiry(
+            redisKey,
+            JSON.stringify(data)
+          );
+        }
       }
-    }
-    else{
-      data = deletedForClaim;
-    }
+      else {
+        data = deletedForClaim;
+      }
 
 
 

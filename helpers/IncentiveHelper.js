@@ -258,7 +258,7 @@ const getIncentiveDetail = async (chainId) => {
 };
 
 const getMyFarmDetail = async (chainId, walletAddress) => {
-
+  console.log("getMyFarmDetail call")
   try {
     let { incentiveCreateds } = await getMyFarmData(chainId);
     const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId || 10000]);
@@ -272,11 +272,12 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
           i
         );
 
-       
-        let desposit = await web3.getDeposit(tokenId);
-   
+        console.log(tokenId, "<====tokenId")
 
-   
+        let desposit = await web3.getDeposit(tokenId);
+
+
+
         if (desposit.owner === walletAddress) {
           for (let i = 0; i < incentiveCreateds.length; i++) {
             try {
@@ -350,9 +351,8 @@ const getMyFarmDetail = async (chainId, walletAddress) => {
         }
 
       } catch (error) {
-
+        console.log(error, "<===== err at index out in my farm")
         if (error == "EnumerableSet: index out of bounds") {
-
           break;
         }
       }
