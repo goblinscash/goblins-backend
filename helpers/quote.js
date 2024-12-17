@@ -16,7 +16,7 @@ async function getQuote(chain, tokenIn, tokenOut, decimals) {
 
           const baseURL = "https://vo7hqx6hkl.execute-api.us-east-1.amazonaws.com/prod"
           const result = await axios.get(`${baseURL}/quote`, { params });
-          return parseFloat(result.data?.quoteDecimals).toFixed(3)
+          return parseFloat(result.data?.quoteDecimals).toFixed(2)
 
     } catch (error) {
         return null
