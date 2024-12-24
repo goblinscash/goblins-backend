@@ -28,6 +28,13 @@ const moduleConfig = [
     route: true,
     routeName: "price",
   },
+  {
+    type: "farm",
+    apiVersion: "v1",
+    status: true,
+    route: true,
+    routeName: "farm",
+  }
 ];
 module.exports = moduleConfig;
 

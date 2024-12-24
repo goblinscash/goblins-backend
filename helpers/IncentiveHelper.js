@@ -23,7 +23,7 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   let calculateReward = usdPrice ? rewardAmount * usdPrice : rewardAmount;
 
   calculateReward = Number(calculateReward).toFixed(2);
-  // console.log(calculateReward, "||", poolData.totalValueLockedUSD,"||",rewardPeriodYears)
+  console.log(calculateReward, "||", poolData.totalValueLockedUSD,"||",rewardPeriodYears)
 
   // Calculate APR
   const apr = toFixedCustm(
@@ -423,6 +423,7 @@ module.exports = {
   getDeletedDataForClaim,
   createSingleIncentiveData,
   getDepositIncentiveData,
+  calculateAPR
 };
 
 
