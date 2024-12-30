@@ -4,6 +4,7 @@ const redisFunc = require("../utility/redis");
 const { getIncentiveDetail } = require("../helpers/IncentiveHelper");
 const { getLogs } = require("../script/getTransaction");
 const { getUnStakeLogs } = require("../script/getTransactionUnstake");
+const { syncTvlAndApr } = require("../modules/farm/controller/farmController");
 
 const getIncentiveData = async () => {
   try {
@@ -21,11 +22,26 @@ const getIncentiveData = async () => {
   }
 };
 
+const syncFarmData = async () => {
+  try {
+    console.log("cron hit syncTvlAndApr");
+    for (let i = 0; i < CONST.supportedChain.length; i++) {
+      const chainId = CONST.supportedChain[i];
+      await syncTvlAndApr(chainId);
+    }
+  } catch (error) {
+    console.log(error, "<===err in cron syncTvlAndApr");
+  }
+};
+
 // Schedule the getIncentiveData to run every 30 minutes
 cron.schedule("*/30 * * * *", getIncentiveData);
 cron.schedule("0 0 * * *", () => {
   getLogs(10000);
   getUnStakeLogs(10000);
 });
+
+cron.schedule("*/30 * * * *", syncFarmData);
+
 
 module.exports = cron;

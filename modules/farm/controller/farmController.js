@@ -196,7 +196,7 @@ module.exports = {
             if (!wallet) {
                 return response.sendValidationErrorResponse("Wallet is Required", res);
             }
-
+            const web3 = new Web3Intraction(chainId);
             const deposits = await Deposit.aggregate([
                 {
                     $match: { wallet: wallet.toLowerCase(), chainId: parseInt(chainId), isUnstaked: false }
@@ -216,7 +216,7 @@ module.exports = {
                     $project: {
                         _id: "$farmId",
                         incentiveId: "$incentiveId",
-                        feeTier: "$farmDetails.feeTier",
+                        feeTier: { $divide: ["$farmDetails.feeTier", 10000] },
                         getPoolDetail: "$farmDetails.getPoolDetail",
                         rewardSymbol: "$farmDetails.rewardSymbol",
                         tokenId: "$tokenId",
@@ -235,6 +235,15 @@ module.exports = {
                     },
                 },
             ]);
+
+            for (let index = 0; index < deposits.length; index++) {
+                const element = deposits[index];
+                let getRewards = await web3.getRewardInfo(
+                    element.key,
+                    element.tokenId
+                );
+                element.rewardInfo.reward = getRewards?.reward.toString() / 10 ** element.rewardInfo?.tokenDecimal
+            }
 
             return response.sendSuccessResponse({ data: deposits }, res);
         } catch (error) {
@@ -331,6 +340,31 @@ module.exports = {
 
         } catch (error) {
             return response.sendErrorResponse(error, res)
+        }
+    },
+
+    syncTvlAndApr: async (chainId) => {
+        try {
+            const query = { chainId, isUnstaked: true }
+            const farms = await Farm.find(query);
+
+            for (let index = 0; index < farms.length; index++) {
+                const farm = farms[index];
+                const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId]);
+                let { pool } = await getPool(farm.pool);
+                const usdPrice = await getQuote(chainId, farm.rewardToken, usdtAddr[chainId], farm.rewardDecimal)
+                const incentiveData = {
+                    startTime: farm.startTime,
+                    endTime: farm.endTime
+                }
+                const apr = calculateAPR(pool, incentiveData, farm.reward, usdPrice)
+                farm.apr = apr.apr
+                farm.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
+                await farm.save()
+            }
+
+        } catch (error) {
+
         }
     }
 }
