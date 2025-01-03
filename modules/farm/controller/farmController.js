@@ -343,6 +343,72 @@ module.exports = {
         }
     },
 
+    getDeletedFarm: async (req, res) => {
+        try {
+            const { chainId, wallet } = req.query
+            if (!chainId) {
+                return response.sendValidationErrorResponse("Chain Id Required", res);
+            }
+            if (!wallet) {
+                return response.sendValidationErrorResponse("Wallet is Required", res);
+            }
+            const web3 = new Web3Intraction(chainId);
+            const deposits = await Deposit.aggregate([
+                {
+                    $match: { wallet: wallet.toLowerCase(), chainId: parseInt(chainId), isUnstaked: true }
+                },
+                {
+                    $lookup: {
+                        from: "farms",
+                        localField: "farmId",
+                        foreignField: "_id",
+                        as: "farmDetails",
+                    },
+                },
+                {
+                    $unwind: "$farmDetails",
+                },
+                {
+                    $project: {
+                        _id: "$farmId",
+                        incentiveId: "$incentiveId",
+                        feeTier: { $divide: ["$farmDetails.feeTier", 10000] },
+                        getPoolDetail: "$farmDetails.getPoolDetail",
+                        rewardSymbol: "$farmDetails.rewardSymbol",
+                        tokenId: "$tokenId",
+                        isUnstaked: "$isUnstaked",
+                        rewardInfo: {
+                            reward: { $ifNull: ["$reward", 0] },
+                            tokenDecimal: { $ifNull: ["$tokenDecimal", 0] }
+                        },
+                        key: {
+                            rewardToken: "$farmDetails.rewardToken",
+                            pool: "$farmDetails.pool",
+                            startTime: "$farmDetails.startTime",
+                            endTime: "$farmDetails.endTime",
+                            refundee: "$farmDetails.refundee"
+                        }
+                    },
+                },
+            ]);
+
+            for (let index = 0; index < deposits.length; index++) {
+                const element = deposits[index];
+                let getRewards = await web3.getRewards(
+                    element.key?.rewardToken,
+                    wallet
+                );
+                element.rewardInfo.reward = getRewards?.toString() / 10 ** element.rewardInfo?.tokenDecimal
+            }
+
+            const filteredDeposits = deposits.filter(deposit => deposit.rewardInfo.reward > 0)
+
+            return response.sendSuccessResponse({ data: filteredDeposits }, res);
+        } catch (error) {
+            return response.sendErrorResponse(error, res)
+        }
+    },
+
     syncTvlAndApr: async (chainId) => {
         try {
             const query = { chainId, isUnstaked: true }

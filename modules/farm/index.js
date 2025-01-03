@@ -11,6 +11,7 @@ router.get('/myfarm', farmController.myFarm)
 router.post('/delete', farmController.deleteFarm)
 router.post('/multistake', farmController.multiStake);
 router.post('/unstakeall', farmController.unstakeAll);
+router.get('/claim', farmController.getDeletedFarm)
 
 
 module.exports = router;
