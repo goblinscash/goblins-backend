@@ -392,8 +392,12 @@ module.exports = {
                 },
             ]);
 
-            for (let index = 0; index < deposits.length; index++) {
-                const element = deposits[index];
+            const uniqueDeposits = deposits.filter((deposit, index, self) =>
+                index === self.findIndex(d => d.key?.rewardToken.toLowerCase() === deposit.key?.rewardToken.toLowerCase())
+            )
+
+            for (let index = 0; index < uniqueDeposits.length; index++) {
+                const element = uniqueDeposits[index];
                 let getRewards = await web3.getRewards(
                     element.key?.rewardToken,
                     wallet
@@ -401,7 +405,7 @@ module.exports = {
                 element.rewardInfo.reward = getRewards?.toString() / 10 ** element.rewardInfo?.tokenDecimal
             }
 
-            const filteredDeposits = deposits.filter(deposit => deposit.rewardInfo.reward > 0)
+            const filteredDeposits = uniqueDeposits.filter(deposit => deposit.rewardInfo.reward > 0)
 
             return response.sendSuccessResponse({ data: filteredDeposits }, res);
         } catch (error) {
