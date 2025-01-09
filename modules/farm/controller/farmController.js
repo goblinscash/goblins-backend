@@ -273,14 +273,14 @@ module.exports = {
             if (!chainId) {
                 return response.sendValidationErrorResponse("Chain Id Required", res);
             }
-            if (!wallet) {
-                return response.sendValidationErrorResponse("Wallet is Required", res);
-            }
             if (!farmId) {
                 return response.sendValidationErrorResponse("Farm id is Required", res);
             }
             await Farm.findOneAndUpdate({ chainId, _id: farmId }, { isUnstaked: true })
-            await Deposit.findOneAndUpdate({ farmId, chainId, wallet: wallet.toLowerCase() }, { isUnstaked: true })
+            await Deposit.updateMany(
+                { farmId, chainId },
+                { $set: { isUnstaked: true } }
+            );
             return res.status(200).send({ msg: "successfully removed the farm!" })
         } catch (error) {
             return response.sendErrorResponse(error, res)
