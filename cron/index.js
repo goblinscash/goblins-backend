@@ -34,14 +34,14 @@ const syncFarmData = async () => {
   }
 };
 
-// Schedule the getIncentiveData to run every 30 minutes
-cron.schedule("*/30 * * * *", getIncentiveData);
-cron.schedule("0 0 * * *", () => {
-  getLogs(10000);
-  getUnStakeLogs(10000);
-});
+// // Schedule the getIncentiveData to run every 30 minutes
+// cron.schedule("*/30 * * * *", getIncentiveData);
+// cron.schedule("0 0 * * *", () => {
+//   getLogs(10000);
+//   getUnStakeLogs(10000);
+// });
 
-cron.schedule("*/30 * * * *", syncFarmData);
+cron.schedule("*/50 * * * *", syncFarmData);
 
 
 module.exports = cron;

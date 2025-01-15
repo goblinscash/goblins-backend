@@ -10,9 +10,6 @@ const { getTokenPriceInUSD } = require("./getPrice");
 
 const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
 
-  // console.log(usdPrice, "<=====usdPrice", typeof(usdPrice))
-
-
   usdPrice = parseFloat(usdPrice)
 
   const { startTime, endTime } = incentiveData;
@@ -23,7 +20,6 @@ const calculateAPR = (poolData, incentiveData, rewardAmount, usdPrice) => {
   let calculateReward = usdPrice ? rewardAmount * usdPrice : rewardAmount;
 
   calculateReward = Number(calculateReward).toFixed(2);
-  console.log(calculateReward, "||", poolData.totalValueLockedUSD,"||",rewardPeriodYears)
 
   // Calculate APR
   const apr = toFixedCustm(

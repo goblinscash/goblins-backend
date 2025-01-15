@@ -449,7 +449,7 @@ module.exports = {
 
     syncTvlAndApr: async (chainId) => {
         try {
-            const query = { chainId, isUnstaked: true }
+            const query = { chainId, isUnstaked: false }
             const farms = await Farm.find(query);
 
             for (let index = 0; index < farms.length; index++) {
@@ -462,9 +462,11 @@ module.exports = {
                     endTime: farm.endTime
                 }
                 const apr = calculateAPR(pool, incentiveData, farm.reward, usdPrice)
-                farm.apr = apr.apr
-                farm.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
-                await farm.save()
+                const _farm = await Farm.findOne({ _id: farm._id })
+                _farm.apr = apr.apr
+                _farm.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
+                await _farm.save()
+                console.log("++++++", apr)
             }
 
         } catch (error) {
