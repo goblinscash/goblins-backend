@@ -8,7 +8,9 @@ const depositSchema = new mongoose.Schema({
     isUnstaked: { type: Boolean, default: false },
     reward: { type: Number },
     tokenDecimal: { type: Number }
-})
+},
+    { timestamps: true }
+)
 
 const Deposit = mongoose.model("deposit", depositSchema)
 

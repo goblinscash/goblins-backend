@@ -80,6 +80,10 @@ module.exports = {
                 payload.createdData.refundee,
             ])
 
+            const _farm = await Farm.findOne({ incentiveId })
+            if (_farm) {
+                return res.status(200).send({ msg: "Farm created successfully!" })
+            }
             farmData.incentiveId = incentiveId
             farmData.apr = apr.apr
             farmData.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
@@ -173,6 +177,10 @@ module.exports = {
             if (!farm) {
                 return response.sendValidationErrorResponse("Invalid farm id", res);
             }
+            const _stake = await Deposit.findOne({ chainId, farmId, tokenId, wallet: wallet.toLowerCase(), isUnstaked: false })
+            if (_stake) {
+                return res.status(200).send({ msg: "successfully deposited!" })
+            }
             depositData.farmId = farmId
             depositData.chainId = chainId
             depositData.wallet = wallet.toLowerCase()
@@ -260,7 +268,12 @@ module.exports = {
             if (!wallet) {
                 return response.sendValidationErrorResponse("Wallet is Required", res);
             }
-            const status = await Deposit.findOneAndUpdate({ chainId, farmId, wallet: wallet.toLowerCase(), isUnstaked: false }, { isUnstaked: true })
+            await Deposit.findOneAndUpdate({ chainId, farmId, wallet: wallet.toLowerCase(), isUnstaked: false }, { isUnstaked: true })
+            const _farm = await Farm.findOne({ _id: farmId })
+            if (_farm) {
+                _farm.nftCount = (_farm.nftCount || 0) - (_farm.nftCount ? 1 : 0);
+                await _farm.save()
+            }
             return res.status(200).send({ msg: "successfully unstaked!" })
         } catch (error) {
             return response.sendErrorResponse(error, res)
@@ -269,13 +282,26 @@ module.exports = {
 
     deleteFarm: async (req, res) => {
         try {
-            const { chainId, wallet, farmId } = req.body
+            const { chainId, farmId } = req.body
             if (!chainId) {
                 return response.sendValidationErrorResponse("Chain Id Required", res);
             }
             if (!farmId) {
                 return response.sendValidationErrorResponse("Farm id is Required", res);
             }
+
+            const farm = await Farm.findOne({ chainId, _id: farmId });
+            if (!farm) {
+                return response.sendValidationErrorResponse("Farm not found", res);
+            }
+
+            const currentTime = Date.now();
+            if (currentTime < farm.endTime) {
+                return res.status(400).send({
+                    msg: "Cannot delete farm: End time has not been reached yet."
+                });
+            }
+
             await Farm.findOneAndUpdate({ chainId, _id: farmId }, { isUnstaked: true })
             await Deposit.updateMany(
                 { farmId, chainId },
@@ -312,8 +338,11 @@ module.exports = {
                 depositData.tokenId = tokenId
                 depositData.tokenDecimal = farm?.rewardDecimal
                 farm.nftCount += 1
-                await farm.save()
-                await Deposit.create(depositData)
+                const _stake = await Deposit.findOne({ chainId, farmId: id, tokenId, wallet: wallet.toLowerCase(), isUnstaked: false })
+                if (!_stake) {
+                    await farm.save()
+                    await Deposit.create(depositData)
+                }
             }
 
             return res.status(200).send({ msg: "successfully deposited!" })
@@ -335,6 +364,11 @@ module.exports = {
             for (let index = 0; index < stakes.length; index++) {
                 const element = stakes[index];
                 await Deposit.findOneAndUpdate({ chainId, farmId: element?.farmId, wallet: wallet.toLowerCase(), tokenId, isUnstaked: false }, { isUnstaked: true })
+                const _farm = await Farm.findOne({ _id: element?.farmId })
+                if (_farm) {
+                    _farm.nftCount = (_farm.nftCount || 0) - (_farm.nftCount ? 1 : 0);
+                    await _farm.save()
+                }
             }
             return res.status(200).send({ msg: "successfully unstaked!" })
 
@@ -435,6 +469,44 @@ module.exports = {
 
         } catch (error) {
 
+        }
+    },
+
+    getFarmId: async (req, res) => {
+        try {
+            const { chainId, incentiveId } = req.query
+            if (!chainId) {
+                return response.sendValidationErrorResponse("Chain Id Required", res);
+            }
+
+            const farm = await Farm.findOne({ chainId, incentiveId })
+            return res.status(200).send({ id: farm._id })
+
+        } catch (error) {
+            return response.sendErrorResponse(error, res)
+        }
+    },
+
+    unstakeStatus: async (req, res) => {
+        try {
+            const { chainId } = req.query
+            if (!chainId) {
+                return response.sendValidationErrorResponse("Chain Id Required", res);
+            }
+
+            const unstakedFarms = await Farm.find({ chainId, isUnstaked: true })
+            let count = 0
+            for (let index = 0; index < unstakedFarms.length; index++) {
+                const element = unstakedFarms[index];
+                const deposit = await Deposit.find({ farmId: element._id, isUnstaked: false })
+                if (deposit) {
+                    count += deposit.length
+                }
+            }
+            return res.status(200).send({ data: count })
+
+        } catch (error) {
+            return response.sendErrorResponse(error, res)
         }
     }
 }

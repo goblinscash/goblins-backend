@@ -23,7 +23,9 @@ const farmSchema = new mongoose.Schema({
   endTime: { type: Number, required: true },
   refundee: { type: String, required: true },
   isUnstaked: { type: Boolean, default: false },
-});
+},
+  { timestamps: true }
+);
 
 const Farm = mongoose.model('farms', farmSchema);
 
