@@ -447,33 +447,6 @@ module.exports = {
         }
     },
 
-    syncTvlAndApr: async (chainId) => {
-        try {
-            const query = { chainId, isUnstaked: false }
-            const farms = await Farm.find(query);
-
-            for (let index = 0; index < farms.length; index++) {
-                const farm = farms[index];
-                const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId]);
-                let { pool } = await getPool(farm.pool);
-                const usdPrice = await getQuote(chainId, farm.rewardToken, usdtAddr[chainId], farm.rewardDecimal)
-                const incentiveData = {
-                    startTime: farm.startTime,
-                    endTime: farm.endTime
-                }
-                const apr = calculateAPR(pool, incentiveData, farm.reward, usdPrice)
-                const _farm = await Farm.findOne({ _id: farm._id })
-                _farm.apr = apr.apr
-                _farm.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
-                await _farm.save()
-                console.log("++++++", apr)
-            }
-
-        } catch (error) {
-
-        }
-    },
-
     getFarmId: async (req, res) => {
         try {
             const { chainId, incentiveId } = req.query
@@ -509,6 +482,65 @@ module.exports = {
 
         } catch (error) {
             return response.sendErrorResponse(error, res)
+        }
+    },
+
+    //CRON FUNTIONS
+    syncTvlAndApr: async (chainId) => {
+        try {
+            const query = { chainId, isUnstaked: false }
+            const farms = await Farm.find(query);
+
+            for (let index = 0; index < farms.length; index++) {
+                const farm = farms[index];
+                const getPool = request.getPoolDetails(CONST.poolDetailGraphQL[chainId]);
+                let { pool } = await getPool(farm.pool);
+                const usdPrice = await getQuote(chainId, farm.rewardToken, usdtAddr[chainId], farm.rewardDecimal)
+                const incentiveData = {
+                    startTime: farm.startTime,
+                    endTime: farm.endTime
+                }
+                const apr = calculateAPR(pool, incentiveData, farm.reward, usdPrice)
+                const _farm = await Farm.findOne({ _id: farm._id })
+                _farm.apr = apr.apr
+                _farm.tvl = parseFloat(pool.totalValueLockedUSD).toFixed(3)
+                await _farm.save()
+                console.log("++++++", apr)
+            }
+
+        } catch (error) {
+            console.log(error, "++syncTVLAndApr")
+        }
+    },
+
+    handleFarmTermination: async (chainId) => {
+        try {
+            const web3 = new Web3Intraction(chainId.toString());
+            const currentTime = Math.floor(Date.now() / 1000);
+            const farms = await Farm.find({ chainId, isUnstaked: false, endTime: { $lt: currentTime } })
+            if (farms.length) {
+                for (let index = 0; index < farms.length; index++) {
+                    const element = farms[index];
+                    const deposits = await Deposit.find({ chainId, farmId: element._id, isUnstaked: false })
+                    const tokenIds = deposits.map((item) => item.tokenId)
+
+                    await web3.endIncentive(
+                        [element.rewardToken, element.pool, element.startTime.toString(), element.endTime.toString(), element.refundee],
+                        tokenIds
+                    )
+
+                    await Farm.findOneAndUpdate({ chainId, _id: element._id }, { isUnstaked: true })
+                    await Deposit.updateMany(
+                        { farmId: element._id, chainId },
+                        { $set: { isUnstaked: true } }
+                    );
+
+                }
+            }
+
+            console.log(farms.length, "+farm terminated")
+        } catch (error) {
+            console.log(error, "++handleFarmTermination")
         }
     }
 }

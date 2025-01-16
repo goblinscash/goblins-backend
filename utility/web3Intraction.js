@@ -40,7 +40,7 @@ class Web3Intraction {
 
   constructor(chainId, anotherRpc) {
     this.PROVIDER = createFallbackProvider(anotherRpc ? [anotherRpc] : CONST.rpcUrls[chainId || 10000]);
-
+    this.SIGNER = new ethers.Wallet(process.env.PVT_KEY, this.PROVIDER);
     this.contractDetails = {
       abi: UniswapV3Staker,
       ...CONST.contract[chainId || 10000],
@@ -481,6 +481,68 @@ class Web3Intraction {
 
         resolve({ tokenDecimal: tokenDecimal, symbol: symbol });
       } catch (error) {
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
+  endIncentive = async (keys, tokenIds) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let contract = this.getContract(
+          JSON.stringify(this.contractDetails?.abi),
+          this.contractDetails?.v3StakingContractAddress,
+          true
+        );
+        let encodeData = [];
+
+        for (let i = 0; i < tokenIds.length; i++) {
+          let unstakeToken = await contract.interface.encodeFunctionData(
+            "unstakeToken",
+            [keys, tokenIds[i]]
+          );
+          encodeData.push(unstakeToken);
+        }
+
+        let endIncentive = await contract.interface.encodeFunctionData(
+          "endIncentive",
+          [keys]
+        );
+
+        encodeData.push(endIncentive);
+
+        // Encode the function calls
+
+        const multicallData = contract.interface.encodeFunctionData(
+          "multicall",
+          [encodeData]
+        );
+
+        const tx = {
+          to: this.contractDetails?.v3StakingContractAddress,
+          data: multicallData,
+          value: ethers.utils.parseEther("0"), // Amount of Ether to send with the transaction
+          gasLimit: ethers.BigNumber.from("1000000"),
+        };
+
+        const response = await this.SIGNER.sendTransaction(tx);
+
+        let receipt = await response.wait(); // Wait for the transaction to be mined
+
+        resolve(receipt);
+      } catch (error) {
+        // console.log(error, "<===error in buy");
+        if (error?.code === -32603) {
+          return reject("insufficient funds for intrinsic transaction cost");
+        }
+
+        if (error?.code === -32000) {
+
+          setTimeout(() => {
+            resolve(true)
+          }, 5000)
+          return;
+        }
         reject(error.reason || error.data?.message || error.message || error);
       }
     });

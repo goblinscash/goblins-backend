@@ -4,7 +4,7 @@ const redisFunc = require("../utility/redis");
 const { getIncentiveDetail } = require("../helpers/IncentiveHelper");
 const { getLogs } = require("../script/getTransaction");
 const { getUnStakeLogs } = require("../script/getTransactionUnstake");
-const { syncTvlAndApr } = require("../modules/farm/controller/farmController");
+const { syncTvlAndApr, handleFarmTermination } = require("../modules/farm/controller/farmController");
 
 const getIncentiveData = async () => {
   try {
@@ -34,6 +34,18 @@ const syncFarmData = async () => {
   }
 };
 
+const automateFarmTermination = async () => {
+  try {
+    console.log("cron hit automateFarmTermination");
+    for (let i = 0; i < CONST.supportedChain.length; i++) {
+      const chainId = CONST.supportedChain[i];
+      await handleFarmTermination(chainId);
+    }
+  } catch (error) {
+    console.log(error, "<===err in cron automateFarmTermination");
+  }
+};
+
 // // Schedule the getIncentiveData to run every 30 minutes
 // cron.schedule("*/30 * * * *", getIncentiveData);
 // cron.schedule("0 0 * * *", () => {
@@ -41,6 +53,8 @@ const syncFarmData = async () => {
 //   getUnStakeLogs(10000);
 // });
 
+
+cron.schedule("*/59 * * * *", automateFarmTermination);
 cron.schedule("*/50 * * * *", syncFarmData);
 
 
