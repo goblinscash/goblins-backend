@@ -7,6 +7,7 @@ const { getQuote } = require("../../../helpers/quote");
 const { calculateAPR } = require("../../../helpers/IncentiveHelper");
 const Deposit = require("../models/depositModel");
 const { makeComputeData } = require("../../../helpers/computeIncentive");
+const { default: axios } = require("axios");
 
 const usdtAddr = {
     10000: "0xBc2F884680c95A02cea099dA2F524b366d9028Ba", //bcusdt
@@ -155,7 +156,17 @@ module.exports = {
                 }
             }));
 
-            return response.sendSuccessResponse({ data: transformedFarms }, res);
+            const web3 = new Web3Intraction(chainId);
+            const _farms = []
+            for (let index = 0; index < transformedFarms.length; index++) {
+                const element = transformedFarms[index];
+                const count = await web3.nftCount(element.incentiveId)
+                element.nftCount = count.numberOfStakes.toString()
+                _farms.push(element)
+                
+            }
+
+            return response.sendSuccessResponse({ data: _farms }, res);
         } catch (error) {
             return response.sendErrorResponse(error, res);
         }
@@ -541,6 +552,50 @@ module.exports = {
             console.log(farms.length, "+farm terminated")
         } catch (error) {
             console.log(error, "++handleFarmTermination")
+        }
+    },
+
+    handleFarmCreation: async (chainId) => {
+        try {
+            const apiUrl = 'https://api.goblins.cash/api/v1/farm/create';
+            const web3 = new Web3Intraction(chainId);
+            for (let index = 0; index < CONST.farms[chainId].length; index++) {
+                const element = CONST.farms[chainId][index];
+
+                const start = Math.ceil((Date.now() / 1000 ) + 5 * 60);
+                const end = start + 300 //7 * 24 * 60 * 60;
+                element.startTime = start 
+                element.endTime = end
+
+                const incentiveId = await makeComputeData([
+                    element.rewardToken,
+                    element.pool,
+                    element.startTime.toString(),
+                    element.endTime.toString(),
+                    element.refundee,
+                ])
+                await web3.createIncentive(
+                    [
+                        element.rewardToken,
+                        element.pool,
+                        element.startTime.toString(),
+                        element.endTime.toString(),
+                        element.refundee,
+                    ],
+                    element.reward,
+                    element.minWidth,
+                    element.rewardToken
+                );
+
+                const data = {
+                    chainId,
+                    createdData: element
+                }
+                await axios.post(apiUrl, data, { timeout: 10000 });
+                console.log("farm created incentiveId: ", incentiveId);
+            }
+        } catch (error) {
+            console.log(error, "++handleFarmCreation")
         }
     }
 }

@@ -4,7 +4,7 @@ const redisFunc = require("../utility/redis");
 const { getIncentiveDetail } = require("../helpers/IncentiveHelper");
 const { getLogs } = require("../script/getTransaction");
 const { getUnStakeLogs } = require("../script/getTransactionUnstake");
-const { syncTvlAndApr, handleFarmTermination } = require("../modules/farm/controller/farmController");
+const { syncTvlAndApr, handleFarmTermination, handleFarmCreation } = require("../modules/farm/controller/farmController");
 
 const getIncentiveData = async () => {
   try {
@@ -54,6 +54,8 @@ const automateFarmTermination = async () => {
 // });
 
 
+// handleFarmCreation(56)
+// cron.schedule("0 0 * * 1", handleFarmCreation(56));
 cron.schedule("*/59 * * * *", automateFarmTermination);
 cron.schedule("*/50 * * * *", syncFarmData);
 

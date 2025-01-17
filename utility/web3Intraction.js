@@ -67,6 +67,16 @@ class Web3Intraction {
     }
   };
 
+  getContractInstance = (abi, address) => {
+    try {
+      let contract = new Contract(address, JSON.parse(abi), this.SIGNER);
+      return contract;
+    } catch (error) {
+      console.log("error", error);
+      return null;
+    }
+  };
+
 
   /**
    * Get Deposit in Incentive
@@ -486,6 +496,75 @@ class Web3Intraction {
     });
   };
 
+  checkAllowance = async (tokenAmount, tokenAddress, approvalAddress) => {
+    return new Promise(async (resolve, reject) => {
+      let tokenAmountWithDecimal = 0;
+      try {
+        let walletAddres = this.SIGNER.getAddress();
+        if (tokenAddress && approvalAddress) {
+          let tokenContract = this.getContractInstance(
+            JSON.stringify(TokenABI),
+            tokenAddress,
+            true
+          );
+
+          let getBalance = await tokenContract.balanceOf(walletAddres);
+          let tokenDecimal = await tokenContract.decimals();
+
+          getBalance = getBalance.toString() / 10 ** tokenDecimal;
+          if (Number(tokenAmount) > Number(getBalance)) {
+            return reject("Don't have enough token");
+          }
+
+          let tokenAllowence = await tokenContract.allowance(
+            walletAddres,
+            approvalAddress
+          );
+
+          let getTotalSupply = await tokenContract.totalSupply();
+          let getTotalSupplyInEth =
+            getTotalSupply.toString() / 10 ** tokenDecimal;
+          if (Number(tokenAmount) > Number(getTotalSupplyInEth)) {
+            return reject("Don't have enough supply in pool");
+          }
+
+          // tokenAmount = parseInt(tokenAmount);
+          tokenAllowence = tokenAllowence.toString();
+
+          if (tokenDecimal == 18) {
+            tokenAmountWithDecimal = ethers.utils.parseUnits(
+              tokenAmount.toString(),
+              "ether"
+            );
+          } else {
+            tokenAmountWithDecimal = Number(tokenAmount) * 10 ** tokenDecimal;
+          }
+          tokenAmountWithDecimal = toFixedCustm(parseInt(tokenAmountWithDecimal));
+
+          if (Number(tokenAmountWithDecimal) > tokenAllowence) {
+            const txn = await tokenContract.approve(
+              approvalAddress,
+              tokenAmountWithDecimal.toString()
+            );
+            await txn.wait();
+          }
+          setTimeout(() => {
+            resolve(tokenAmountWithDecimal);
+          }, 5000)
+        }
+      } catch (error) {
+        if (error?.code === -32000) {
+          setTimeout(() => {
+            resolve(tokenAmountWithDecimal);
+          }, 5000)
+          return
+        }
+        console.log(error, "<====err in allowance");
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
   endIncentive = async (keys, tokenIds) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -532,6 +611,50 @@ class Web3Intraction {
         resolve(receipt);
       } catch (error) {
         // console.log(error, "<===error in buy");
+        if (error?.code === -32603) {
+          return reject("insufficient funds for intrinsic transaction cost");
+        }
+
+        if (error?.code === -32000) {
+
+          setTimeout(() => {
+            resolve(true)
+          }, 5000)
+          return;
+        }
+        reject(error.reason || error.data?.message || error.message || error);
+      }
+    });
+  };
+
+  createIncentive = async (keys, rewards, minimumWidth, tokenAddress) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let contract = this.getContractInstance(
+          JSON.stringify(this.contractDetails?.abi),
+          this.contractDetails?.v3StakingContractAddress,
+          true
+        );
+
+        let tx;
+        if (!tokenAddress) {
+          return reject("Token Address not found!");
+        }
+        let rewardTokenAmount = await this.checkAllowance(
+          rewards,
+          tokenAddress,
+          this.contractDetails?.v3StakingContractAddress
+        );
+
+        tx = await contract.createIncentive(
+          keys,
+          rewardTokenAmount.toString(),
+          minimumWidth,
+        );
+        let receipt = await tx.wait();
+        resolve(receipt);
+      } catch (error) {
+        console.log(error, "<===error in createIncentive");
         if (error?.code === -32603) {
           return reject("insufficient funds for intrinsic transaction cost");
         }

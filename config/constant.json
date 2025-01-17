@@ -4,36 +4,32 @@
             "v3StakingContractAddress": "0x264136e16848008A689FAC1c121631ff6D44376E",
             "nftManagerContractAddress": "0x6Cf824f9556cEdE40710AD25BC26fd47f7063944",
             "uniswapV3FactoryAddress": "0x08153648C209644a68ED4DC0aC06795F6563D17b",
-            "stakingContractAddress" : "0xfA3D02c971F6D97076b8405500c2210476C6A5E8"
+            "stakingContractAddress": "0xfA3D02c971F6D97076b8405500c2210476C6A5E8"
         },
         "56": {
             "v3StakingContractAddress": "0x44355c799dba57e6c22a9d7b3815dfF2A6FB0846",
             "nftManagerContractAddress": "0x32e9182879f62f2429879A1E7D491ccd37f2E613",
             "uniswapV3FactoryAddress": "0x30D9e1f894FBc7d2227Dd2a017F955d5586b1e14",
-            "stakingContractAddress" : "0xB4D117f9c404652030F3d12f6DE58172317a2eDa"
+            "stakingContractAddress": "0xB4D117f9c404652030F3d12f6DE58172317a2eDa"
         },
         "8453": {
             "v3StakingContractAddress": "0x07579501479896B286a0Bc9FF67100e99687Af35",
             "nftManagerContractAddress": "0x3f11feF6633f9aF950426fEe3eaE6e68943E28A0",
             "uniswapV3FactoryAddress": "0xE82Fa4d4Ff25bad8B07c4d1ebd50e83180DD5eB8",
-            "stakingContractAddress" : "0xAAFa8A16121939414B529289fA69F08aefE51769"
+            "stakingContractAddress": "0xAAFa8A16121939414B529289fA69F08aefE51769"
         }
     },
     "graphQLUrl": {
         "10000": "https://graph.dfd.cash/subgraphs/name/v3stakerminwidths",
         "56": "https://api.studio.thegraph.com/query/89726/bscv3stakerminwidth/1.0.0",
         "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5",
-        "8453":"https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
-
+        "8453": "https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
     },
     "tokenPrice": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
         "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
-        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
-
-
+        "8453": "https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
     },
-
     "rpcUrls": {
         "10000": [
             "https://smartbch.greyh.at",
@@ -48,7 +44,6 @@
             "https://rpc.ankr.com/bsc",
             "https://bsc-mainnet.infura.io/v3/14a3d83eebd142bb944fb094de64d32f",
             "https://bscrpc.com"
-       
         ],
         "97": [
             "https://bsc-testnet-rpc.publicnode.com",
@@ -62,8 +57,7 @@
     "poolDetailGraphQL": {
         "10000": "https://graph.dfd.cash/subgraphs/name/goblins/subgraph-v3",
         "56": "https://graph-bsc.goblins.cash/subgraphs/name/goblins/bsc-subgraph-v3",
-        "8453":"https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
-
+        "8453": "https://graph-base.goblins.cash/subgraphs/name/goblins/base-subgraph-v3"
     },
     "supportedChain": [
         "10000",
@@ -75,7 +69,20 @@
         3000,
         500,
         100
-    ]
+    ],
+    "farms": {
+        "56": [
+            {
+                "rewardToken": "0xa697e272a73744b343528c3bc4702f2565b2f422",
+                "pool": "0xd108993efd7ef56fda1eb1a3bc713cfb3cf45394",
+                "startTime": 1737110140,
+                "endTime": 1737110740,
+                "refundee": "0x9009a3BffFe89419D7dA4E6740ABdFE3b1BA843c",
+                "minWidth": 2000,
+                "reward": 20
+            }
+        ],
+        "8453": [],
+        "10000": []
+    }
 }
-
-
