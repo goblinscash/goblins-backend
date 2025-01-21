@@ -241,7 +241,7 @@ module.exports = {
                         tokenId: "$tokenId",
                         isUnstaked: "$isUnstaked",
                         rewardInfo: {
-                            reward: { $ifNull: ["$reward", 0] },
+                            reward: "$reward",
                             tokenDecimal: { $ifNull: ["$tokenDecimal", 0] }
                         },
                         key: {
@@ -262,6 +262,7 @@ module.exports = {
                     element.tokenId
                 );
                 element.rewardInfo.reward = getRewards?.reward.toString() / 10 ** element.rewardInfo?.tokenDecimal
+                console.log(getRewards?.reward, element.key, element.tokenId)
             }
 
             return response.sendSuccessResponse({ data: deposits }, res);

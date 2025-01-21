@@ -33,6 +33,25 @@ const bchAddr = {
     }
 }
 
+async function fetchQuote(chain){
+    try {
+        const web3 = new Web3Intraction(chain);
+        const totalSupply = await web3.getGobStakes();
+        const gobPrice = await getQuote(chain, gobAddr[chain]?.tokenIn, gobAddr[chain]?.tokenOut, 9)
+        let rewardTokenPrice = gobPrice
+        if (parseInt(chain) != 8453) {
+            rewardTokenPrice = await getQuote(chain, bchAddr[chain]?.tokenIn, bchAddr[chain]?.tokenOut, 18)
+        }
+        const apr = await web3.getAPR(totalSupply, rewardTokenPrice, gobPrice)
+        quote = { gobPrice, rewardTokenPrice, apr }
+        if (quote?.gobPrice) {
+            await redisFunc.setStringsWithExpiry(chain.toString() + "price", JSON.stringify(quote), 3600);
+        }
+        return quote
+    } catch (error) {
+        console.log(error, "++sync gob price and tvl")
+    }
+}
 
 module.exports = {
     getPrice: async (req, res) => {
@@ -40,18 +59,7 @@ module.exports = {
         try {
             let quote = await redisFunc.getString(chain.toString() + "price");
             if (!quote) {
-                const web3 = new Web3Intraction(chain);
-                const totalSupply = await web3.getGobStakes();
-                const gobPrice = await getQuote(chain, gobAddr[chain]?.tokenIn, gobAddr[chain]?.tokenOut, 9)
-                let rewardTokenPrice = gobPrice
-                if(parseInt(chain) != 8453) {
-                    rewardTokenPrice = await getQuote(chain, bchAddr[chain]?.tokenIn, bchAddr[chain]?.tokenOut, 18)
-                }
-                const apr = await web3.getAPR(totalSupply, rewardTokenPrice, gobPrice)
-                quote = {gobPrice,rewardTokenPrice, apr}
-                if (quote) {
-                    await redisFunc.setStringsWithExpiry(chain.toString() + "price", JSON.stringify(quote), 600);
-                }
+                quote = await fetchQuote(chain)
             } else {
                 quote = JSON.parse(quote);
             }
@@ -60,5 +68,7 @@ module.exports = {
         } catch (error) {
             return response.sendErrorResponse(error, res);
         }
-    }
+    },
+    fetchQuote
 }
+
