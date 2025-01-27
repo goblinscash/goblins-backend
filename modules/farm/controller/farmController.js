@@ -122,9 +122,10 @@ module.exports = {
             const currentTime = Math.floor(Date.now() / 1000);
             const isEndedBoolean = isEnded === "true";
 
+            const _incentiveId = "0x10223c60c2b77ff082c1141571608933cb5d3d74f9c7de9aa14cff6756d792a6"
             const query = isEndedBoolean
-                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime } }
-                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime } };
+                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime }, incentiveId : { $ne: _incentiveId } }
+                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime }, incentiveId : { $ne: _incentiveId } };
 
 
             const farms = await Farm.find(query);
@@ -188,6 +189,7 @@ module.exports = {
             if (!farm) {
                 return response.sendValidationErrorResponse("Invalid farm id", res);
             }
+            
             const _stake = await Deposit.findOne({ chainId, farmId, tokenId, wallet: wallet.toLowerCase(), isUnstaked: false })
             if (_stake) {
                 return res.status(200).send({ msg: "successfully deposited!" })
