@@ -122,10 +122,15 @@ module.exports = {
             const currentTime = Math.floor(Date.now() / 1000);
             const isEndedBoolean = isEnded === "true";
 
-            const _incentiveId = "0x10223c60c2b77ff082c1141571608933cb5d3d74f9c7de9aa14cff6756d792a6"
+            const excludedIncentiveIds = [
+                "0x10223c60c2b77ff082c1141571608933cb5d3d74f9c7de9aa14cff6756d792a6",
+                "0x8b81cdaf6aa74331a887e45e813b9ef765f1084157d20cf0c3c7bd1e75e62872",
+                "0x2b15be64bc2dc4021963d34656a43c88e714b2cbd8edca4dad937a35f572b84a",
+                "0xed8a3efe025a5a61a847eef42445e4f4fa393deaae70100be8b6f2601965ca7f"
+            ]
             const query = isEndedBoolean
-                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime }, incentiveId : { $ne: _incentiveId } }
-                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime }, incentiveId : { $ne: _incentiveId } };
+                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime }, incentiveId : { $nin: excludedIncentiveIds } }
+                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime }, incentiveId : { $nin: excludedIncentiveIds } };
 
 
             const farms = await Farm.find(query);
@@ -264,7 +269,6 @@ module.exports = {
                     element.tokenId
                 );
                 element.rewardInfo.reward = getRewards?.reward.toString() / 10 ** element.rewardInfo?.tokenDecimal
-                console.log(getRewards?.reward, element.key, element.tokenId)
             }
 
             return response.sendSuccessResponse({ data: deposits }, res);
