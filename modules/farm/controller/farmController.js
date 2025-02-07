@@ -279,14 +279,14 @@ module.exports = {
 
     unstake: async (req, res) => {
         try {
-            const { chainId, wallet, farmId } = req.body
+            const { chainId, wallet, farmId, tokenId } = req.body
             if (!chainId) {
                 return response.sendValidationErrorResponse("Chain Id Required", res);
             }
             if (!wallet) {
                 return response.sendValidationErrorResponse("Wallet is Required", res);
             }
-            await Deposit.findOneAndUpdate({ chainId, farmId, wallet: wallet.toLowerCase(), isUnstaked: false }, { isUnstaked: true })
+            await Deposit.findOneAndUpdate({ chainId, farmId, wallet: wallet.toLowerCase(), isUnstaked: false, tokenId }, { isUnstaked: true })
             const _farm = await Farm.findOne({ _id: farmId })
             if (_farm) {
                 _farm.nftCount = (_farm.nftCount || 0) - (_farm.nftCount ? 1 : 0);
