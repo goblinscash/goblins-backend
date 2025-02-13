@@ -651,12 +651,12 @@ module.exports = {
                 if (element.staked) {
                     await axios.post(stakeUrl, {
                         chainId, wallet, farmId, tokenId: element.tokenId
-                    })
+                    }, { timeout: 10000, headers: { 'Content-Type': 'application/json' } })
                     console.log(element.tokenId, "staked")
                 } else {
                     await axios.post(unstakeUrl, {
                         chainId, wallet, farmId, tokenId: element.tokenId
-                    })
+                    }, { timeout: 10000, headers: { 'Content-Type': 'application/json' } })
                     console.log(element.tokenId, "unstaked")
                 }
             }
