@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { getAllDataQuery, getMyFarmQuery, getPoolDetailQuery, tokenUSDPriceQuery } = require("./queries");
+const { getAllDataQuery, getMyFarmQuery, getPoolDetailQuery, tokenUSDPriceQuery, tokenStakedQuery, tokenUnstakedQuery } = require("./queries");
 
 function getIncentive(subgraphUrl) {
   return async function (variables) {
@@ -106,4 +106,59 @@ function getTokenUSDPrice(subgraphUrl) {
   };
 }
 
-module.exports = { getIncentive, getFarmData,getPoolDetails, getTokenUSDPrice };
+function getStakedTokenId(subgraphUrl) {
+  return async function (timestamp) {
+    const variables = { timestamp };
+    try {
+      const response = await axios.post(
+        subgraphUrl,
+        {
+          query: tokenStakedQuery,
+          variables: variables,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const {data}  = response.data;
+    
+    
+      return data
+    } catch (error) {
+      throw new Error(`Error fetching data: ${error.message}`);
+    }
+  };
+}
+
+function getUnstakedTokenId(subgraphUrl) {
+  return async function (timestamp) {
+    const variables = { timestamp };
+    try {
+      const response = await axios.post(
+        subgraphUrl,
+        {
+          query: tokenUnstakedQuery,
+          variables: variables,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const {data}  = response.data;
+    
+    
+      return data
+    } catch (error) {
+      throw new Error(`Error fetching data: ${error.message}`);
+    }
+  };
+}
+
+
+module.exports = { getIncentive, getFarmData,getPoolDetails, getTokenUSDPrice, getStakedTokenId, getUnstakedTokenId };

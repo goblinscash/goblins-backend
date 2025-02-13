@@ -75,9 +75,45 @@ query ($id: String!) {
 }
 `;
 
+const tokenStakedQuery = `
+query($timestamp: BigInt!) {
+  tokenStakeds(
+    orderBy: blockTimestamp
+    orderDirection: desc
+    first: 100
+    where: { blockTimestamp_gte: $timestamp }
+  ) {
+    incentiveId
+    tokenId
+    blockTimestamp
+    transactionHash
+  }
+}
+`;
+
+const tokenUnstakedQuery = `
+query($timestamp: BigInt!) {
+  tokenUnstakeds(
+    orderBy: blockTimestamp
+    orderDirection: desc
+    first: 100
+    where: { blockTimestamp_gte: $timestamp }
+  ) {
+    incentiveId
+    tokenId
+    blockTimestamp
+    transactionHash
+  }
+}
+`;
+
+
+
 module.exports = {
   getAllDataQuery,
   getMyFarmQuery,
   getPoolDetailQuery,
-  tokenUSDPriceQuery
+  tokenUSDPriceQuery,
+  tokenStakedQuery,
+  tokenUnstakedQuery
 };

@@ -9,6 +9,10 @@ const Deposit = require("../models/depositModel");
 const { makeComputeData } = require("../../../helpers/computeIncentive");
 const { default: axios } = require("axios");
 
+const BASE_URL = "https://api.goblins.cash/api/v1"
+const stakeUrl = `${BASE_URL}/farm/deposit`
+const unstakeUrl = `${BASE_URL}/farm/unstake`
+
 const usdtAddr = {
     10000: "0xBc2F884680c95A02cea099dA2F524b366d9028Ba", //bcusdt
     56: "0x55d398326f99059fF775485246999027B3197955", // usdt
@@ -129,8 +133,8 @@ module.exports = {
                 "0xed8a3efe025a5a61a847eef42445e4f4fa393deaae70100be8b6f2601965ca7f"
             ]
             const query = isEndedBoolean
-                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime }, incentiveId : { $nin: excludedIncentiveIds } }
-                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime }, incentiveId : { $nin: excludedIncentiveIds } };
+                ? { chainId: chainId, isUnstaked: false, endTime: { $lt: currentTime }, incentiveId: { $nin: excludedIncentiveIds } }
+                : { chainId: chainId, isUnstaked: false, endTime: { $gt: currentTime }, incentiveId: { $nin: excludedIncentiveIds } };
 
 
             const farms = await Farm.find(query);
@@ -169,7 +173,7 @@ module.exports = {
                 const count = await web3.nftCount(element.incentiveId)
                 element.nftCount = count.numberOfStakes.toString()
                 _farms.push(element)
-                
+
             }
 
             return response.sendSuccessResponse({ data: _farms }, res);
@@ -194,7 +198,7 @@ module.exports = {
             if (!farm) {
                 return response.sendValidationErrorResponse("Invalid farm id", res);
             }
-            
+
             const _stake = await Deposit.findOne({ chainId, farmId, tokenId, wallet: wallet.toLowerCase(), isUnstaked: false })
             if (_stake) {
                 return res.status(200).send({ msg: "successfully deposited!" })
@@ -569,9 +573,9 @@ module.exports = {
             for (let index = 0; index < CONST.farms[chainId].length; index++) {
                 const element = CONST.farms[chainId][index];
 
-                const start = Math.ceil((Date.now() / 1000 ) + 5 * 60);
+                const start = Math.ceil((Date.now() / 1000) + 5 * 60);
                 const end = start + 300 //7 * 24 * 60 * 60;
-                element.startTime = start 
+                element.startTime = start
                 element.endTime = end
 
                 const incentiveId = await makeComputeData([
@@ -603,6 +607,62 @@ module.exports = {
             }
         } catch (error) {
             console.log(error, "++handleFarmCreation")
+        }
+    },
+
+    handleTokenStakedAndUnstaked: async (chainId) => {
+        try {
+            const timestamp = Math.floor((Date.now() / 1000) - 600);
+
+            const staked = request.getStakedTokenId(CONST.graphQLUrl[chainId])
+            let { tokenStakeds } = await staked(timestamp)
+
+            tokenStakeds = tokenStakeds.map((item) => ({
+                ...item,
+                staked: true
+            }));
+
+            const unstaked = request.getUnstakedTokenId(CONST.graphQLUrl[chainId])
+            let { tokenUnstakeds } = await unstaked(timestamp)
+
+            tokenUnstakeds = tokenUnstakeds.map((item) => ({
+                ...item,
+                staked: false
+            }));
+
+            const data = [...tokenStakeds, ...tokenUnstakeds]
+
+            data.sort((a, b) => {
+                const timestampDiff = Number(a.blockTimestamp) - Number(b.blockTimestamp);
+                if (timestampDiff !== 0) return timestampDiff;
+
+                return a.staked === b.staked ? 0 : a.staked ? 1 : -1;
+            });
+
+            for (let index = 0; index < data.length; index++) {
+                const element = data[index];
+                const incentiveId = element.incentiveId
+                const farm = await Farm.findOne({ chainId, incentiveId })
+
+                const farmId = farm._id
+                const web3 = new Web3Intraction(chainId);
+                const tx = await web3.getTransaction(element.transactionHash);
+                const wallet = tx.from?.toLowerCase()
+                if (element.staked) {
+                    await axios.post(stakeUrl, {
+                        chainId, wallet, farmId, tokenId: element.tokenId
+                    })
+                    console.log(element.tokenId, "staked")
+                } else {
+                    await axios.post(unstakeUrl, {
+                        chainId, wallet, farmId, tokenId: element.tokenId
+                    })
+                    console.log(element.tokenId, "unstaked")
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
         }
     }
 }

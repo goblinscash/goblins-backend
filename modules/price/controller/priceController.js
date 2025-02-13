@@ -45,7 +45,7 @@ async function fetchQuote(chain){
         const apr = await web3.getAPR(totalSupply, rewardTokenPrice, gobPrice)
         quote = { gobPrice, rewardTokenPrice, apr }
         if (quote?.gobPrice) {
-            await redisFunc.setStringsWithExpiry(chain.toString() + "price", JSON.stringify(quote), 3600);
+            await redisFunc.setStringsWithExpiry(chain.toString() + "price", JSON.stringify(quote), 20 * 60);
         }
         return quote
     } catch (error) {

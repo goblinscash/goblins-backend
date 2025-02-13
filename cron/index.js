@@ -4,7 +4,7 @@ const redisFunc = require("../utility/redis");
 const { getIncentiveDetail } = require("../helpers/IncentiveHelper");
 const { getLogs } = require("../script/getTransaction");
 const { getUnStakeLogs } = require("../script/getTransactionUnstake");
-const { syncTvlAndApr, handleFarmTermination, handleFarmCreation } = require("../modules/farm/controller/farmController");
+const { syncTvlAndApr, handleFarmTermination, handleFarmCreation, handleTokenStakedAndUnstaked } = require("../modules/farm/controller/farmController");
 const { fetchQuote } = require("../modules/price/controller/priceController");
 
 const getIncentiveData = async () => {
@@ -59,6 +59,15 @@ const syncGobPriceAndTVL = async () => {
   }
 };
 
+const syncFarming = async () => {
+  try {
+    console.log("cron hit syncFarming");
+    await handleTokenStakedAndUnstaked(10000);
+  } catch (error) {
+    console.log(error, "<===err in cron syncFarming");
+  }
+};
+
 // // Schedule the getIncentiveData to run every 30 minutes
 // cron.schedule("*/30 * * * *", getIncentiveData);
 // cron.schedule("0 0 * * *", () => {
@@ -67,7 +76,7 @@ const syncGobPriceAndTVL = async () => {
 // });
 
 
-// handleFarmCreation(56)
+cron.schedule("*/5 * * * *", syncFarming);
 // cron.schedule("0 0 * * 1", handleFarmCreation(56));
 cron.schedule("*/30 * * * *", syncGobPriceAndTVL);
 cron.schedule("*/59 * * * *", automateFarmTermination);

@@ -77,6 +77,16 @@ class Web3Intraction {
     }
   };
 
+  getTransaction = async(txHash) => {
+    try {
+      const tx = await this.PROVIDER.getTransaction(txHash);
+      return tx;
+    } catch (error) {
+      console.log("error", error);
+      return null;
+    }
+  };
+
 
   /**
    * Get Deposit in Incentive
