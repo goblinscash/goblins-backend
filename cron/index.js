@@ -61,20 +61,14 @@ const syncGobPriceAndTVL = async () => {
 
 const syncFarming = async () => {
   try {
-    console.log("cron hit syncFarming");
-    await handleTokenStakedAndUnstaked(10000);
+    for (let i = 0; i < CONST.supportedChain.length; i++) {
+      const chainId = CONST.supportedChain[i];
+      await handleTokenStakedAndUnstaked(chainId);
+    }    
   } catch (error) {
     console.log(error, "<===err in cron syncFarming");
   }
 };
-
-// // Schedule the getIncentiveData to run every 30 minutes
-// cron.schedule("*/30 * * * *", getIncentiveData);
-// cron.schedule("0 0 * * *", () => {
-//   getLogs(10000);
-//   getUnStakeLogs(10000);
-// });
-
 
 cron.schedule("*/5 * * * *", syncFarming);
 // cron.schedule("0 0 * * 1", handleFarmCreation(56));
