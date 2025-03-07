@@ -21,7 +21,7 @@
     },
     "graphQLUrl": {
         "10000": "https://graph.dfd.cash/subgraphs/name/v3stakerminwidths",
-        "56": "https://api.studio.thegraph.com/query/89726/bscv3stakerminwidth/1.0.0",
+        "56": "https://graph-bsc.goblins.cash/subgraphs/name/bscv3stakerminwidth",
         "97": "https://api.studio.thegraph.com/query/78445/v3stakerminwidths/0.0.5",
         "8453": "https://graph-base.goblins.cash/subgraphs/name/baseV3stakerminwidths"
     },

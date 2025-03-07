@@ -63,6 +63,7 @@ const syncFarming = async () => {
   try {
     for (let i = 0; i < CONST.supportedChain.length; i++) {
       const chainId = CONST.supportedChain[i];
+      console.log("cron syncFarming for chainId: ", chainId);
       await handleTokenStakedAndUnstaked(chainId);
     }    
   } catch (error) {
@@ -72,6 +73,7 @@ const syncFarming = async () => {
 
 cron.schedule("*/5 * * * *", syncFarming);
 // cron.schedule("0 0 * * 1", handleFarmCreation(56));
+
 cron.schedule("*/30 * * * *", syncGobPriceAndTVL);
 cron.schedule("*/59 * * * *", automateFarmTermination);
 cron.schedule("*/50 * * * *", syncFarmData);
