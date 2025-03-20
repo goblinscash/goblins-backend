@@ -176,6 +176,19 @@ class Web3Intraction {
     }
   };
 
+  getStakesStatus = async (tokenId, incentiveId) => {
+    try {
+      let contract = this.getContract(
+        JSON.stringify(this.contractDetails?.abi),
+        this.contractDetails?.v3StakingContractAddress,
+        true
+      );
+      let status = await contract.stakes(tokenId, incentiveId);
+      return status;
+    } catch (error) {
+      return null;
+    }
+  };
 
   /**
    * Get Rewards in Incentive

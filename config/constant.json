@@ -41,16 +41,14 @@
             "https://smartbch.devops.cash/mainnet"
         ],
         "56": [
-            "https://rpc.ankr.com/bsc",
-            "https://bsc-mainnet.infura.io/v3/14a3d83eebd142bb944fb094de64d32f",
-            "https://bscrpc.com"
+            "https://virulent-dark-hill.bsc.quiknode.pro/01a06406e72abc1a563792bc3ae47c5c620299af"
         ],
         "97": [
             "https://bsc-testnet-rpc.publicnode.com",
             "https://endpoints.omniatech.io/v1/bsc/testnet/public"
         ],
         "8453": [
-            "https://mainnet.base.org",
+            "https://virulent-dark-hill.base-mainnet.quiknode.pro/01a06406e72abc1a563792bc3ae47c5c620299af",
             "https://mainnet.base.org"
         ]
     },
