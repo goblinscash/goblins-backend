@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:5004:5004"
+    volumes:
+      - ./config/env.prod.docker.json:/app/config/env.prod.json
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "127.0.0.1:6379:6379"

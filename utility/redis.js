@@ -3,7 +3,7 @@ class RedisHelper {
   constructor() {
     this.client = null;
     //   this.clientInternal = null;
-    this.host = global.env?.REDIS_HOST || "localhost:6379";
+    this.host = global.env?.REDIS_HOST || "localhost";
     this.port = global.env?.REDIS_PORT || 6379;
     this.connectRedis();
   }
@@ -12,8 +12,10 @@ class RedisHelper {
     try {
       const clientData = await redis
         .createClient({
-          host: this.host,
-          port: this.port,
+          socket: {
+            host: this.host,
+            port: this.port,
+          }
         })
         .on("error", (err) => console.log("Redis Client Error", err))
         .connect();
