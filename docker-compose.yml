@@ -5,6 +5,7 @@ services:
       - "127.0.0.1:5004:5004"
     volumes:
       - ./config/env.prod.docker.json:/app/config/env.prod.json
+      - ./.env:/app/.env
     depends_on:
       - redis
 
